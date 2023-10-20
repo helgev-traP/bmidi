@@ -12,7 +12,7 @@ GUIで操作できるようにする。アドオン化を狙う
 
 setup(
     name='bmidi',
-    version='0.1.2',
+    version='0.1.3',
     packages=find_packages(),
     install_requires="mido",
 )

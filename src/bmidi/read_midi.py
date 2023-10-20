@@ -12,6 +12,7 @@ import bpy
 
 """クラス名あとでいい感じにする"""
 
+
 class Track:
     def __init__(self, path, fix=False) -> None:
         self.path = path
@@ -70,15 +71,41 @@ class Track:
 
         for i in range(len(midi_track_raw)):
             if midi_track_raw[i].type in focus_on or focus_all:
-                self.Messages.append(
-                    {
-                        "type": midi_track_raw[i].type,
-                        "note": midi_track_raw[i].note,
-                        "velocity": midi_track_raw[i].velocity,
-                        "frame": accumulate_ticks
-                        * 60
-                        * self.fps
-                        // (self.bpm * self.ticks_per_beat),
-                    }
-                )
+                if midi_track_raw[i].type in ["note_on", "note_off"]:
+                    # ## note_on/off
+                    self.Messages.append(
+                        {
+                            "type": midi_track_raw[i].type,
+                            "note": midi_track_raw[i].note,
+                            "velocity": midi_track_raw[i].velocity,
+                            "frame": accumulate_ticks
+                            * 60
+                            * self.fps
+                            // (self.bpm * self.ticks_per_beat),
+                        }
+                    )
+                elif midi_track_raw[i].type in ["control_change"]:
+                    # ## control change
+                    self.Messages.append(
+                        {
+                            "type": midi_track_raw[i].type,
+                            "control": midi_track_raw[i].control,
+                            "value": midi_track_raw[i].value,
+                            "frame": accumulate_ticks
+                            * 60
+                            * self.fps
+                            // (self.bpm * self.ticks_per_beat),
+                        }
+                    )
+                else:
+                    # ## else
+                    self.Messages.append(
+                        {
+                            "type": "else",
+                            "frame": accumulate_ticks
+                            * 60
+                            * self.fps
+                            // (self.bpm * self.ticks_per_beat),
+                        }
+                    )
             accumulate_ticks += midi_track_raw[i].time
