@@ -14,3 +14,8 @@ BlenderのPythonが入ってるフォルダに行く。
 をやればBlenderのPythonに入る。
 
 するとBlender内でimportとかできるようになる。
+
+## 使い方
+
+ライブラリを作っている最中なのでここには書かない
+Pythonを読んでくれ
