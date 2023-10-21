@@ -10,7 +10,7 @@ import re
 
 コレクションも変えておく？(あとまわし)
 
-外部ファイルを読み込んで
+外部ファイル(json？)を読み込んでオブジェクトの動きをBlenderに伝える
 
 """
 
@@ -44,4 +44,3 @@ class MotionCut:
                     exist_MotionCuts.append((re.findall("Cut_[0-9]+", i.name))[0])
         return exist_MotionCuts
 
-    
