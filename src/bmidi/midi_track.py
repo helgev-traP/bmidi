@@ -1,5 +1,4 @@
 import mido
-import bpy
 
 """
 必要な物:
