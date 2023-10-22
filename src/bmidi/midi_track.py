@@ -12,7 +12,7 @@ import mido
 """クラス名あとでいい感じにする"""
 
 
-class Track:
+class ReadTrack:
     def __init__(self, path, fix=False) -> None:
         self.path = path
         self.Messages = []
