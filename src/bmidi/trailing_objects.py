@@ -36,17 +36,23 @@ futures:
 
 
 class CreateObject:
-    # # class
+    # # classes
+    # * 変数がNoneの時はBlenderにその変数のアンカーを置かない
+    class __ModifierAnchor:
+        def __init__(self) -> None:
+            pass
+
+    class __MaterialAnchor:
+        def __init__(self) -> None:
+            pass
+
     class __AnimationAnchor:
-        # todo: 各変数がNoneを持てるようにする
-        # todo: 変数がNoneの時はBlenderにその変数のアンカーを置かない
         def __init__(self, frm, lct, scl, eul, alp) -> None:
             self.frame = frm
             self.location = lct
             self.scale = scl
             self.euler = eul
             self.alpha = alp
-            # todo モディファイアとマテリアルに対応させる。nameによって辞書にする
 
         def edit(self, lct, scl, eul, alp):
             """frameは関数で編集しない"""
@@ -59,6 +65,8 @@ class CreateObject:
     def __init__(self, name, mesh, frm, lct=None, scl=None, eul=None, alp=None) -> None:
         self.__object = bpy.data.objects.new(name, mesh)
         self.name = name
+        self.__modifier_anchors = self.__ModifierAnchor()
+        self.__material_anchors = self.__MaterialAnchor()
         self.__animation_anchors = [
             self.__AnimationAnchor(
                 frm=frm,
@@ -120,6 +128,24 @@ class CreateObject:
                 eul=poped.euler if eul == "None" else eul,
                 alp=poped.alpha if alp == "None" else alp,
             )
+
+    # # for modifier and material
+
+    def add_anchor_type():
+        # todo 使うかどうかはわからない
+        pass
+
+    # # modifier
+
+    def add_modifier(self, modifier_name, modifier_type):
+        self.__object.modifiers.new(name=modifier_name, type=modifier_type)
+        # todo ここにModifier追加したときのアンカーの挙動を書く
+        pass
+
+    # # material
+
+    def set_material():
+        pass
 
     # # Bake to Blender
     def bake_to_blender(self):
