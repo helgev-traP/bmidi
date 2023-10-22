@@ -13,6 +13,7 @@ import traceback
         - スケール
         - オイラー角
         - アルファ
+        Noneはアンカーを置かないとする情報
     - get関数で取ってこれるようにするもの
         - アニメーションアンカー数
         - メッシュ本体
@@ -45,6 +46,7 @@ class CreateObject:
             self.scale = scl
             self.euler = eul
             self.alpha = alp
+            # todo モディファイアとマテリアルに対応させる。nameによって辞書にする
 
         def edit(self, lct, scl, eul, alp):
             """frameは関数で編集しない"""
@@ -54,18 +56,16 @@ class CreateObject:
             self.alpha = self.alpha if alp == None else alp
 
     # # __init__
-    def __init__(self, name, mesh, frm, lct=None, scl=None, eul=None, alp=1) -> None:
+    def __init__(self, name, mesh, frm, lct=None, scl=None, eul=None, alp=None) -> None:
         self.__object = bpy.data.objects.new(name, mesh)
         self.name = name
-        # 一つ目のアンカーだけは全ての値を持たせる
-        # todo でもBlenderで勝手に割り当ててくれるからあんまり考える必要なくない？
         self.__animation_anchors = [
             self.__AnimationAnchor(
                 frm=frm,
-                lct=[0, 0, 0] if lct == None else lct,
-                scl=[1, 1, 1] if scl == None else scl,
-                eul=[0, 0, 0] if eul == None else eul,
-                alp=1.0 if alp == None else alp,
+                lct=lct,
+                scl=scl,
+                eul=eul,
+                alp=alp,
             )
         ]
 
@@ -83,7 +83,7 @@ class CreateObject:
         return [i for i in self.__object.modifiers]
 
     # # trailing anchor
-    def new_anchor(self, frm, lct=None, scl=None, eul=None, alp=1.0):
+    def new_anchor(self, frm, lct=None, scl=None, eul=None, alp=None):
         try:
             for i in range(len(self.__animation_anchors)):
                 if frm == self.__animation_anchors[i].frame:
@@ -99,19 +99,26 @@ class CreateObject:
         except:
             traceback.print_exc()
 
-    def edit_anchor(self, anchor_no, frm=None, lct=None, scl=None, eul=None, alp=None):
-        if frm == None or frm == self.__animation_anchors[anchor_no].frame:
-            self.__animation_anchors[anchor_no].edit(lct, scl, eul, alp)
+    def edit_anchor(
+        self, anchor_no, frm="None", lct="None", scl="None", eul="None", alp="None"
+    ):
+        if frm == "None" or frm == self.__animation_anchors[anchor_no].frame:
+            self.__animation_anchors[anchor_no].edit(
+                lct=self.__animation_anchors[anchor_no].location
+                if lct == "None"
+                else lct,
+                scl=self.__animation_anchors[anchor_no].scale if scl == "None" else scl,
+                eul=self.__animation_anchors[anchor_no].euler if eul == "None" else eul,
+                alp=self.__animation_anchors[anchor_no].alpha if alp == "None" else alp,
+            )
         else:
             poped = self.__animation_anchors.pop(anchor_no)
             self.new_anchor(
                 frm=frm,
-                lct=poped.location
-                if lct == None
-                else (None if lct == "erase" else lct),
-                scl=poped.scale if scl == None else (None if scl == "erase" else scl),
-                eul=poped.euler if eul == None else (None if eul == "erase" else eul),
-                alp=poped.alpha if alp == None else (None if alp == "erase" else alp),
+                lct=poped.location if lct == "None" else lct,
+                scl=poped.scale if scl == "None" else scl,
+                eul=poped.euler if eul == "None" else eul,
+                alp=poped.alpha if alp == "None" else alp,
             )
 
     # # Bake to Blender
