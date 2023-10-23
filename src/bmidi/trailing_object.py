@@ -115,8 +115,9 @@ class CreateObject:
         def __init__(self) -> None:
             self.
 
-    def __init__(self, mesh) -> None:
-        pass
+    def __init__(self,name,  mesh) -> None:
+        self.__object = bpy.data.meshes.new(name, mesh)
+
 
 
 # # Usage Example
