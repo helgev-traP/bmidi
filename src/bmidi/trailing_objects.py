@@ -49,7 +49,7 @@ class CreateObject:
         def __init__(self) -> None:
             pass
 
-    class __AnimationAnchor:
+    class AnimationAnchor:
         '''オブジェクト情報に関するアンカーオブジェクト'''
         def __init__(self, frm, lct, scl, eul, alp) -> None:
             self.frame = frm
@@ -72,7 +72,7 @@ class CreateObject:
         self.__modifier_anchors = self.ModifierAnchor()
         self.__material_anchors = self.MaterialAnchor()
         self.__animation_anchors = [
-            self.__AnimationAnchor(
+            self.AnimationAnchor(
                 frm=frame,
                 lct=location,
                 scl=scale,
@@ -97,16 +97,16 @@ class CreateObject:
     # # trailing anchor
     def add_anchor(self, frame, location=None, scale=None, euler=None, alpha=None):
         try:
-            for i in range(len(self.__animation_anchors)):
-                if frame == self.__animation_anchors[i].frame:
+            for i, animation_anchor in enumerate(self.__animation_anchors):
+                if frame == animation_anchor.frame:
                     raise ValueError("An anchor aleady there.")
-                if frame < self.__animation_anchors[i].frame:
+                if frame < animation_anchor.frame:
                     self.__animation_anchors.insert(
-                        i, self.__AnimationAnchor(frame, location, scale, euler, alpha)
+                        i, self.AnimationAnchor(frame, location, scale, euler, alpha)
                     )
                     return
             self.__animation_anchors.append(
-                self.__AnimationAnchor(frame, location, scale, euler, alpha)
+                self.AnimationAnchor(frame, location, scale, euler, alpha)
             )
         except:
             traceback.print_exc()
@@ -144,7 +144,7 @@ class CreateObject:
     def add_modifier(self, modifier_name, modifier_type):
         self.__object.modifiers.new(name=modifier_name, type=modifier_type)
         # todo ここにModifier追加したときのアンカーの挙動を書く
-        pass
+        
 
     # # material
 
