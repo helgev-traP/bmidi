@@ -60,10 +60,10 @@ class CreateObject:
 
         def edit(self, lct, scl, eul, alp):
             """frameは関数で編集しない"""
-            self.location = self.location if lct == None else lct
-            self.scale = self.scale if scl == None else scl
-            self.euler = self.euler if eul == None else eul
-            self.alpha = self.alpha if alp == None else alp
+            self.location = self.location if lct is None else lct
+            self.scale = self.scale if scl is None else scl
+            self.euler = self.euler if eul is None else eul
+            self.alpha = self.alpha if alp is None else alp
 
     # # __init__
     def __init__(self, name, mesh, frame, location=None, scale=None, euler=None, alpha=None) -> None:
@@ -95,18 +95,18 @@ class CreateObject:
         return [i for i in self.__object.modifiers]
 
     # # trailing anchor
-    def new_anchor(self, frm, lct=None, scl=None, eul=None, alp=None):
+    def add_anchor(self, frame, location=None, scale=None, euler=None, alpha=None):
         try:
             for i in range(len(self.__animation_anchors)):
-                if frm == self.__animation_anchors[i].frame:
+                if frame == self.__animation_anchors[i].frame:
                     raise ValueError("An anchor aleady there.")
-                if frm < self.__animation_anchors[i].frame:
+                if frame < self.__animation_anchors[i].frame:
                     self.__animation_anchors.insert(
-                        i, self.__AnimationAnchor(frm, lct, scl, eul, alp)
+                        i, self.__AnimationAnchor(frame, location, scale, euler, alpha)
                     )
                     return
             self.__animation_anchors.append(
-                self.__AnimationAnchor(frm, lct, scl, eul, alp)
+                self.__AnimationAnchor(frame, location, scale, euler, alpha)
             )
         except:
             traceback.print_exc()
@@ -125,12 +125,12 @@ class CreateObject:
             )
         else:
             poped = self.__animation_anchors.pop(anchor_no)
-            self.new_anchor(
-                frm=frm,
-                lct=poped.location if lct == "None" else lct,
-                scl=poped.scale if scl == "None" else scl,
-                eul=poped.euler if eul == "None" else eul,
-                alp=poped.alpha if alp == "None" else alp,
+            self.add_anchor(
+                frame=frm,
+                location=poped.location if lct == "None" else lct,
+                scale=poped.scale if scl == "None" else scl,
+                euler=poped.euler if eul == "None" else eul,
+                alpha=poped.alpha if alp == "None" else alp,
             )
 
     # # for modifier and material
