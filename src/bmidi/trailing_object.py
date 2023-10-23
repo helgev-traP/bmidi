@@ -101,6 +101,22 @@ class SimpleObject:
 # # ExtendedObject
 
 
+class CreateObject:
+    '''
+    拡張してなるべく全てのパラメータに対応できるようにしたもの
+    初期はオブジェクト・シェーダーノード・モディファイアのみ
+    もしかしたらこれだけ残すかも
+
+    方針:
+    アンカーになりうるものは全て内部のクラスで管理、構造体を使って名前で管理する
+    {name: なまえ, type:"TYPE", anchors: リスト[辞書]}
+    '''
+    class NewAnchor:
+        def __init__(self) -> None:
+            self.
+
+    def __init__(self, mesh) -> None:
+        pass
 
 
 # # Usage Example
