@@ -1,6 +1,3 @@
-import bpy
-import traceback
-
 """
 1つのオブジェクトについて色々とまとめる
 持つべき変数:
@@ -34,19 +31,26 @@ futures:
     - 物理演算もいい感じに扱えるようにする
 """
 
+import traceback
+import bpy
+
 
 class CreateObject:
+    '''オブジェクトのデータを保持するクラス'''
     # # classes
     # * 変数がNoneの時はBlenderにその変数のアンカーを置かない
-    class __ModifierAnchor:
+    class ModifierAnchor:
+        '''モディファイアのアンカーオブジェクト'''
         def __init__(self) -> None:
             pass
 
-    class __MaterialAnchor:
+    class MaterialAnchor:
+        '''マテリアルのアンカーオブジェクト'''
         def __init__(self) -> None:
             pass
 
     class __AnimationAnchor:
+        '''オブジェクト情報に関するアンカーオブジェクト'''
         def __init__(self, frm, lct, scl, eul, alp) -> None:
             self.frame = frm
             self.location = lct
@@ -62,18 +66,18 @@ class CreateObject:
             self.alpha = self.alpha if alp == None else alp
 
     # # __init__
-    def __init__(self, name, mesh, frm, lct=None, scl=None, eul=None, alp=None) -> None:
+    def __init__(self, name, mesh, frame, location=None, scale=None, euler=None, alpha=None) -> None:
         self.__object = bpy.data.objects.new(name, mesh)
         self.name = name
-        self.__modifier_anchors = self.__ModifierAnchor()
-        self.__material_anchors = self.__MaterialAnchor()
+        self.__modifier_anchors = self.ModifierAnchor()
+        self.__material_anchors = self.MaterialAnchor()
         self.__animation_anchors = [
             self.__AnimationAnchor(
-                frm=frm,
-                lct=lct,
-                scl=scl,
-                eul=eul,
-                alp=alp,
+                frm=frame,
+                lct=location,
+                scl=scale,
+                eul=euler,
+                alp=alpha,
             )
         ]
 
@@ -82,7 +86,7 @@ class CreateObject:
         return len(self.__animation_anchors)
 
     def get_mesh(self):
-        return self.data
+        return self.__object.data
 
     def get_material(self):
         return [i for i in self.__object.data.materials]
