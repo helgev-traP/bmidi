@@ -102,22 +102,64 @@ class SimpleObject:
 
 
 class CreateObject:
-    '''
+    """
     拡張してなるべく全てのパラメータに対応できるようにしたもの
     初期はオブジェクト・シェーダーノード・モディファイアのみ
     もしかしたらこれだけ残すかも
 
     方針:
     アンカーになりうるものは全て内部のクラスで管理、構造体を使って名前で管理する
-    {name: なまえ, type:"TYPE", anchors: リスト[辞書]}
-    '''
-    class NewAnchor:
-        def __init__(self) -> None:
-            self.
+    {なまえ: {type:"TYPE", anchors: リスト[辞書]}}
+    """
 
-    def __init__(self,name,  mesh) -> None:
+    # ## Anchors
+    class Channel:
+        class Anchor:
+            def __init__(self, frame, value) -> None:
+                self.frame = frame
+                self.value = value
+
+        def __init__(self, propatie) -> None:
+            """なるべく汎用にする"""
+            self.propatie = propatie
+            self.anchors: list = []
+
+        def add_anchor(self, frame, value):
+            for i, anchor in enumerate(self.anchors):
+                if frame == anchor.frame:
+                    print("This frame already exists a anchor.")
+                    return
+                if frame < anchor.frame:
+                    self.anchors.insert(i, self.Anchor(frame=frame, value=value))
+                    return
+            self.anchors.append(self.Anchor(frame=frame, value=value))
+
+    # ## main
+    def __init__(self, name, mesh) -> None:
+        """オブジェクトとアンカーのみを持つ"""
         self.__object = bpy.data.meshes.new(name, mesh)
+        self.channels = dict()
 
+    # ## geters
+    def get_channel_names(self):
+        return self.channels.keys()
+
+    def get_channel_propaties(self):
+        return [self.channels[i].propatie for i in self.channels.keys()]
+
+    # ## channels
+    def new_channel(self, name, propatie):
+        """プロパティ本体をchannel構造体に持たせる"""
+        if name in self.get_channel_names(self):
+            print("name:", name, "is already be used.")
+            return
+        if propatie in self.get_channel_propaties(self):
+            print("propatie:", propatie, "already exist")
+            return
+        self.channels[name] = self.Channel(propatie=propatie)
+
+    def add_anchor(self, name, frame, value):
+        self.channels[name].add_anchor(frame=frame, value=value)
 
 
 # # Usage Example
