@@ -103,28 +103,35 @@ class SimpleObject:
 
 class CreateObject:
     """
-    拡張してなるべく全てのパラメータに対応できるようにしたもの
-    初期はオブジェクト・シェーダーノード・モディファイアのみ
-    もしかしたらこれだけ残すかも
+    アンカーのデータ構造について
+    [CreateObject].__object: BlenderObject
+    [CreateObject].channels: dict[Channel]
+    [Channel].obj_propatie: propatie
+    [Channel].anchors: list[Anchor]
+    [Anchor].frame: int
+    [Anchor].value: float | list[float]
 
-    方針:
-    アンカーになりうるものは全て内部のクラスで管理、構造体を使って名前で管理する
-    {なまえ: {type:"TYPE", anchors: リスト[辞書]}}
+    propertyが予約語と衝突するので、それだけはobj_propertyにする
     """
+    # todo オブジェクトプロパティはdefault_valueで管理されていないのでそれ用のものを作る
+    # todo オブジェクトプロパティとモディファイアプロパティは同じ管理で良さそう
 
     # ## Anchors
     class Channel:
+        '''channel'''
         class Anchor:
+            '''anchor'''
             def __init__(self, frame, value) -> None:
                 self.frame = frame
                 self.value = value
 
-        def __init__(self, propatie) -> None:
+        def __init__(self, obj_property) -> None:
             """なるべく汎用にする"""
-            self.propatie = propatie
+            self.obj_property = obj_property
             self.anchors: list = []
 
         def add_anchor(self, frame, value):
+            '''add anchor'''
             for i, anchor in enumerate(self.anchors):
                 if frame == anchor.frame:
                     print("This frame already exists a anchor.")
@@ -142,24 +149,37 @@ class CreateObject:
 
     # ## geters
     def get_channel_names(self):
+        '''get channels' key'''
         return self.channels.keys()
 
-    def get_channel_propaties(self):
-        return [self.channels[i].propatie for i in self.channels.keys()]
+    def get_channel_properties(self):
+        '''get channel' property'''
+        return [i.obj_property for i in self.channels.items()]
 
     # ## channels
-    def new_channel(self, name, propatie):
+    def new_channel(self, name, obj_property):
         """プロパティ本体をchannel構造体に持たせる"""
-        if name in self.get_channel_names(self):
+        if name in self.get_channel_names():
             print("name:", name, "is already be used.")
             return
-        if propatie in self.get_channel_propaties(self):
-            print("propatie:", propatie, "already exist")
+        if obj_property in self.get_channel_properties():
+            print("property:", obj_property, "already exist")
             return
-        self.channels[name] = self.Channel(propatie=propatie)
+        self.channels[name] = self.Channel(obj_property=obj_property)
 
     def add_anchor(self, name, frame, value):
+        '''channel の中の add_anchor に繋げる'''
         self.channels[name].add_anchor(frame=frame, value=value)
+
+    def bake2blend(self):
+        '''Bake all anchors to Blender'''
+        for channel in self.channels.items():
+            obj_property = channel.obj_property
+            anchors = channel.anchors
+            for anchor in anchors:
+                bpy.context.scene.frame_set(anchor.frame)
+                obj_property.default_value = anchor.value
+                obj_property.keyframe_insert(data_path="default_value", index=-1)
 
 
 # # Usage Example
