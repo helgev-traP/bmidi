@@ -8,6 +8,7 @@
 """
 
 import bpy
+import re
 
 
 # # BasicEndPoint
@@ -113,14 +114,27 @@ class CreateObject:
 
     propertyが予約語と衝突するので、それだけはobj_propertyにする
     """
-    # todo オブジェクトプロパティはdefault_valueで管理されていないのでそれ用のものを作る
-    # todo オブジェクトプロパティとモディファイアプロパティは同じ管理で良さそう
+
+    # todo オブジェクトプロパティとモディファイアプロパティはdefault_valueで管理されていないのでそれ用のものを作る
+
+    """
+    各パラメータのデータタイプについて
+    オブジェクトプロパティ
+        <class 'Vector'>
+    マテリアルプロパティ
+        <class 'bpy.types.NodeSocket{パラメータ名}'>
+    モディファイアプロパティ
+        <class 'bpy.types.{モディファイア名}Modifier'>
+    全部全体マッチでいける
+    """
 
     # ## Anchors
     class Channel:
-        '''channel'''
+        """channel"""
+
         class Anchor:
-            '''anchor'''
+            """anchor"""
+
             def __init__(self, frame, value) -> None:
                 self.frame = frame
                 self.value = value
@@ -131,7 +145,7 @@ class CreateObject:
             self.anchors: list = []
 
         def add_anchor(self, frame, value):
-            '''add anchor'''
+            """add anchor"""
             for i, anchor in enumerate(self.anchors):
                 if frame == anchor.frame:
                     print("This frame already exists a anchor.")
@@ -149,11 +163,11 @@ class CreateObject:
 
     # ## geters
     def get_channel_names(self):
-        '''get channels' key'''
+        """get channels' key"""
         return self.channels.keys()
 
     def get_channel_properties(self):
-        '''get channel' property'''
+        """get channel' property"""
         return [i.obj_property for i in self.channels.items()]
 
     # ## channels
@@ -168,18 +182,35 @@ class CreateObject:
         self.channels[name] = self.Channel(obj_property=obj_property)
 
     def add_anchor(self, name, frame, value):
-        '''channel の中の add_anchor に繋げる'''
+        """channel の中の add_anchor に繋げる"""
         self.channels[name].add_anchor(frame=frame, value=value)
 
     def bake2blend(self):
-        '''Bake all anchors to Blender'''
+        """Bake all anchors to Blender"""
         for channel in self.channels.items():
             obj_property = channel.obj_property
             anchors = channel.anchors
-            for anchor in anchors:
-                bpy.context.scene.frame_set(anchor.frame)
-                obj_property.default_value = anchor.value
-                obj_property.keyframe_insert(data_path="default_value", index=-1)
+            data_type = str(type(obj_property))
+            # todo ここはデータ構造の変更に伴って改築する
+            if re.fullmatch("<class 'Vector'>",data_type) != None:
+                # object
+                pass
+            elif re.fullmatch("<class 'bpy.types.NodeSocket[a-zA-Z]*'>",data_type) != None:
+                # Material
+                for anchor in anchors:
+                    bpy.context.scene.frame_set(anchor.frame)
+                    obj_property.default_value = anchor.value
+                    obj_property.keyframe_insert(data_path="default_value", index=-1)
+            elif re.fullmatch("<class 'bpy.types.[a-zA-Z]*Modifier'>",data_type) != None:
+                # Modifier
+                for anchor in anchors:
+                    bpy.context.scene.frame_set(anchor.frame)
+                    obj_property = anchor.value
+                    obj_property.keyframe_insert(data_path="?", index=-1)
+            else:
+                print("property:", obj_property, "is not supported.")
+                pass
+            
 
 
 # # Usage Example
