@@ -112,22 +112,20 @@ class CreateObject:
     [Anchor].frame: int
     [Anchor].value: float | list[float]
 
-    propertyが予約語と衝突するので、それだけはobj_propertyにする
-    """
-
-    # todo オブジェクトプロパティとモディファイアプロパティはdefault_valueで管理されていないのでそれ用のものを作る
-
-    """
     各パラメータのデータタイプについて
     オブジェクトプロパティ
+        オブジェクトから直接生えている
         <class 'Vector'>
     マテリアルプロパティ
+        ノード.inputs[].default_value
         <class 'bpy.types.NodeSocket{パラメータ名}'>
     モディファイアプロパティ
+        モディファイアから直接生えている
         <class 'bpy.types.{モディファイア名}Modifier'>
     全部全体マッチでいける
     """
 
+    # todo オブジェクトプロパティとモディファイアプロパティはdefault_valueで管理されていないのでそれ用のものを作る
     # ## Anchors
     class Channel:
         """channel"""
@@ -173,13 +171,38 @@ class CreateObject:
     # ## channels
     def new_channel(self, name, obj_property):
         """プロパティ本体をchannel構造体に持たせる"""
+        # 衝突のチェック
         if name in self.get_channel_names():
             print("name:", name, "is already be used.")
             return
         if obj_property in self.get_channel_properties():
             print("property:", obj_property, "already exist")
             return
-        self.channels[name] = self.Channel(obj_property=obj_property)
+        # 各タイプで作業
+        if re.fullmatch("<class 'Vector'>", data_type) is not None:
+            # ## object
+            self.channels[name] = self.Channel(
+                property_type="object",
+                obj_property=obj_property,
+                data_path=data_path,
+                obj=self.__object,
+            )
+        elif (
+            re.fullmatch("<class 'bpy.types.NodeSocket[a-zA-Z]*'>", data_type)
+            is not None
+        ):
+            # ## Material
+            self.channels[name] = self.Channel(
+                property_type="material", obj_property=obj_property
+            )
+        elif (
+            re.fullmatch("<class 'bpy.types.[a-zA-Z]*Modifier'>", data_type) is not None
+        ):
+            # ## Modifier
+            # ! 正直困る
+            pass
+        else:
+            print("property:", obj_property, "is not supported.")
 
     def add_anchor(self, name, frame, value):
         """channel の中の add_anchor に繋げる"""
