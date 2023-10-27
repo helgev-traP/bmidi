@@ -192,16 +192,21 @@ class CreateObject:
             anchors = channel.anchors
             data_type = str(type(obj_property))
             # todo ここはデータ構造の変更に伴って改築する
-            if re.fullmatch("<class 'Vector'>",data_type) != None:
+            if re.fullmatch("<class 'Vector'>", data_type) != None:
                 # object
                 pass
-            elif re.fullmatch("<class 'bpy.types.NodeSocket[a-zA-Z]*'>",data_type) != None:
+            elif (
+                re.fullmatch("<class 'bpy.types.NodeSocket[a-zA-Z]*'>", data_type)
+                != None
+            ):
                 # Material
                 for anchor in anchors:
                     bpy.context.scene.frame_set(anchor.frame)
                     obj_property.default_value = anchor.value
                     obj_property.keyframe_insert(data_path="default_value", index=-1)
-            elif re.fullmatch("<class 'bpy.types.[a-zA-Z]*Modifier'>",data_type) != None:
+            elif (
+                re.fullmatch("<class 'bpy.types.[a-zA-Z]*Modifier'>", data_type) != None
+            ):
                 # Modifier
                 for anchor in anchors:
                     bpy.context.scene.frame_set(anchor.frame)
@@ -210,7 +215,6 @@ class CreateObject:
             else:
                 print("property:", obj_property, "is not supported.")
                 pass
-            
 
 
 # # Usage Example
