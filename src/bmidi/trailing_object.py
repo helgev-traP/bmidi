@@ -144,9 +144,29 @@ class CreateObject:
                     self.anchors.insert(i, self.Anchor(frame=frame, value=value))
                     return
             self.anchors.append(self.Anchor(frame=frame, value=value))
+            return
 
+        def del_anchor(self, frame: int | None = None, index: int | None = None):
+            if (frame == None) ^ (index == None):
+                print("At channel of", self.value_entity)
+                print("Specify frame OR index.")
+                return
+            if index != None:
+                try:
+                    self.anchors.pop(index)
+                except IndexError:
+                    print("At channel of", self.value_entity)
+                    print("Index out of range.")
+                return
+            for i, anchor in enumerate(self.anchors):
+                if frame == anchor.frame:
+                    self.anchors.pop(i)
+                    return
+            print("At channel of", self.value_entity)
+            print("No anchor at frame", frame)
+
+    # todo memo: 一旦残して置いている。
     """
-    todo memo: 一旦残して置いている。
     class ChannelMaterial:
         class Anchor:
             def __init__(self, frame, value) -> None:
@@ -207,15 +227,17 @@ class CreateObject:
             value_entity=value_entity,
             data_path=data_path,
         )
+        return
 
-    def del_channel(self):
-        pass
+    def del_channel(self, channel_name):
+        if self.channels.pop(channel_name, None) == None:
+            print("No channel has such name:", channel_name)
 
-    def add_anchor(self):
-        pass
+    def add_anchor(self, channel_name, frame, value):
+        self.channels[channel_name].add_anchor(frame=frame, value=value)
 
-    def del_anchor(self):
-        pass
+    def del_anchor(self, channel_name, frame=None, index=None):
+        if
 
     # # bake2blend
 
