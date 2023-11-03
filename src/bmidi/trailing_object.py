@@ -203,6 +203,24 @@ class CreateObject:
         self.__object = bpy.data.objects.new(name=name, object_data=mesh)
         self.channels = dict()
         # ## ChannelObjectの規定値を入れておく
+        self.new_channel(
+            name="location",
+            base_entity=self.__object,
+            value_entity=self.__object.location,
+            data_path="location",
+        )
+        self.new_channel(
+            name="scale",
+            base_entity=self.__object,
+            value_entity=self.__object.scale,
+            data_path="scale",
+        )
+        self.new_channel(
+            name="rotation",
+            base_entity=self.__object,
+            value_entity=self.__object.rotation_euler,
+            data_path="rotation_euler",
+        )
 
     # ## getters
 
