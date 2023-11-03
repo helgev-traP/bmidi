@@ -106,7 +106,30 @@ class CreateObject:
     # # datas
 
     class ChannelObject:
-        pass
+        """これは__init__でプロパティ分作られる"""
+
+        class Anchor:
+            def __init__(self, frame, value) -> None:
+                self.frame
+                self.value
+
+        def __init__(self, base_entity, value_entity, data_path: str) -> None:
+            self.base_entity = base_entity
+            self.value_entity = value_entity
+            self.data_path = data_path
+            self.anchors = []
+
+        def add_anchor(self, frame, value):
+            for i, anchor in enumerate(self.anchors):
+                if frame == anchor.frame:
+                    print("At channel of", self.value_entity)
+                    print("There is a anchor already")
+                    return
+                if frame < anchor.frame:
+                    self.anchors.insert(i, self.Anchor(frame=frame, value=value))
+                    return
+            self.anchors.append(self.Anchor(frame=frame, value=value))
+
 
     class ChannelMaterial:
         pass
@@ -119,8 +142,13 @@ class CreateObject:
 
     # # main
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, name, mesh, location=None, scale=None, rotation=None) -> None:
+        self.__object = bpy.data.objects.new(name=name, object_data=mesh)
+        self.channels = dict()
+        # ## ChannelObjectの規定値を入れておく
+        self.channels["location"] = self.ChannelObject(
+            property_type="location", data_path="location"
+        )
 
     # ## getters
 
@@ -147,6 +175,7 @@ class CreateObject:
     # # bake2blend
 
     def bake2blend(self):
+        # todo memo シーンにリンクする
         pass
 
     # # Utilities
@@ -156,6 +185,7 @@ class CreateObject:
 
     def add_modifier(self):
         pass
+
 
 # # Usage Example
 
