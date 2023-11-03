@@ -101,15 +101,6 @@ class SimpleObject:
 
 # # ExtendedObject
 
-"""
-作成中のメモ
-
-一旦オブジェクトマテリアルモディファイア分けて作る
-後でまとめる
-
-
-"""
-
 
 class CreateObject:
     # # datas
