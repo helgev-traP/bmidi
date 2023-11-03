@@ -285,8 +285,15 @@ class CreateObject:
     # # bake2blend
 
     def bake2blend(self):
-        # todo memo シーンにリンクする
-        pass
+        for channel in self.channels.items():
+            for anchor in channel.anchors:
+                bpy.context.scene.frame_set(anchor.frame)
+                channel.value_entity = anchor.value
+                channel.base_entity.keyframe_insert(
+                    data_path=channel.data_path, index=-1
+                )
+        # link
+        bpy.context.scene.collection.objects.link(self.__object)
 
     # # Utilities
 
