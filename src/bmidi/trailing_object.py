@@ -101,19 +101,34 @@ class SimpleObject:
 
 # # ExtendedObject
 
+"""
+作成中のメモ
+
+一旦オブジェクトマテリアルモディファイア分けて作る
+後でまとめる
+
+
+"""
+
 
 class CreateObject:
     # # datas
 
-    class ChannelObject:
-        """これは__init__でプロパティ分作られる"""
+    class Channel:
+        """旧CahnnelObject
+        これは__init__でプロパティ分作られる"""
 
         class Anchor:
             def __init__(self, frame, value) -> None:
                 self.frame
                 self.value
 
-        def __init__(self, base_entity, value_entity, data_path: str) -> None:
+        def __init__(
+            self,
+            base_entity,
+            value_entity,
+            data_path: str,
+        ) -> None:
             self.base_entity = base_entity
             self.value_entity = value_entity
             self.data_path = data_path
@@ -130,38 +145,68 @@ class CreateObject:
                     return
             self.anchors.append(self.Anchor(frame=frame, value=value))
 
-
+    """
+    todo memo: 一旦残して置いている。
     class ChannelMaterial:
-        pass
+        class Anchor:
+            def __init__(self, frame, value) -> None:
+                self.frame = frame
+                self.value = value
+
+        def __init__(
+            self,
+        ) -> None:
+            pass
 
     class ChannelModifier:
         pass
+    """
 
     class channelMatrix:
         pass
 
     # # main
 
-    def __init__(self, name, mesh, location=None, scale=None, rotation=None) -> None:
+    def __init__(
+        self,
+        name,
+        mesh,
+        location=None,
+        scale=None,
+        rotation=None,
+    ) -> None:
         self.__object = bpy.data.objects.new(name=name, object_data=mesh)
         self.channels = dict()
         # ## ChannelObjectの規定値を入れておく
-        self.channels["location"] = self.ChannelObject(
-            property_type="location", data_path="location"
-        )
 
     # ## getters
 
     def get_channel_names(self):
-        pass
+        """get channels' key"""
+        return self.channels.keys()
 
     def get_channel_properties(self):
-        pass
+        """get channel' property"""
+        return [i.value_entity for i in self.channels.items()]
 
     # ## channel | anchor
 
-    def new_channel(self):
-        pass
+    def new_channel(self, name, base_entity, value_entity, data_path: str):
+        """"""
+        # check name
+        if name in self.get_channel_names():
+            print("name:", name, "is already be used.")
+            return
+        # check property
+        if value_entity in self.get_channel_properties():
+            print("channel of property", value_entity, "is already exist.")
+            return
+        # add
+        self.channels[name] = self.Channel(
+            base_entity=base_entity,
+            value_entity=value_entity,
+            data_path=data_path,
+        )
 
     def del_channel(self):
         pass
