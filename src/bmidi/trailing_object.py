@@ -146,7 +146,11 @@ class CreateObject:
             self.anchors.append(self.Anchor(frame=frame, value=value))
             return
 
-        def del_anchor(self, frame: int | None = None, index: int | None = None):
+        def del_anchor(
+            self,
+            frame: int | None = None,
+            index: int | None = None,
+        ):
             if (frame == None) ^ (index == None):
                 print("At channel of", self.value_entity)
                 print("Specify frame OR index.")
@@ -164,6 +168,7 @@ class CreateObject:
                     return
             print("At channel of", self.value_entity)
             print("No anchor at frame", frame)
+            return
 
     # todo memo: 一旦残して置いている。
     """
@@ -237,7 +242,7 @@ class CreateObject:
         self.channels[channel_name].add_anchor(frame=frame, value=value)
 
     def del_anchor(self, channel_name, frame=None, index=None):
-        if
+        self.channels[channel_name].del_anchor(frame=frame, index=index)
 
     # # bake2blend
 
