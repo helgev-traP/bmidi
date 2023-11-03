@@ -252,6 +252,13 @@ class CreateObject:
         )
         return
 
+    def rename_channel(self, name, new_name):
+        channel = self.channels.pop(name, None)
+        if channel == None:
+            print("No channel has such name:", name)
+            return
+        self.channels[new_name] = channel
+
     def del_channel(self, channel_name):
         if self.channels.pop(channel_name, None) == None:
             print("No channel has such name:", channel_name)
