@@ -269,6 +269,17 @@ class CreateObject:
     def del_anchor(self, channel_name, frame=None, index=None):
         self.channels[channel_name].del_anchor(frame=frame, index=index)
 
+    # ## wraping new_channel
+
+    def new_channel_object():
+        pass
+
+    def new_channel_material():
+        pass
+
+    def new_channel_modifier():
+        pass
+
     # # bake2blend
 
     def bake2blend(self):
