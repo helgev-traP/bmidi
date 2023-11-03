@@ -271,6 +271,8 @@ class CreateObject:
 
     # ## wraping new_channel
 
+    # todo >> >  >   >    >  ここから  <    <   <  < <<
+
     def new_channel_object():
         pass
 
