@@ -103,8 +103,59 @@ class SimpleObject:
 
 
 class CreateObject:
-    pass
+    # # datas
 
+    class ChannelObject:
+        pass
+
+    class ChannelMaterial:
+        pass
+
+    class ChannelModifier:
+        pass
+
+    class channelMatrix:
+        pass
+
+    # # main
+
+    def __init__(self) -> None:
+        pass
+
+    # ## getters
+
+    def get_channel_names(self):
+        pass
+
+    def get_channel_properties(self):
+        pass
+
+    # ## channel | anchor
+
+    def new_channel(self):
+        pass
+
+    def del_channel(self):
+        pass
+
+    def add_anchor(self):
+        pass
+
+    def del_anchor(self):
+        pass
+
+    # # bake2blend
+
+    def bake2blend(self):
+        pass
+
+    # # Utilities
+
+    def set_individual_material(self):
+        pass
+
+    def add_modifier(self):
+        pass
 
 # # Usage Example
 

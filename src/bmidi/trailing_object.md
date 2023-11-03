@@ -8,6 +8,7 @@
   - __object
   - channels
     - type: ChannelObject
+      - // このチャンネルはオブジェクトを作ったときに自動生成される
       - data_path
       - anchors
         - frame
@@ -28,3 +29,5 @@
     - type
     - data_path
     - channel_object
+
+### メソッド
