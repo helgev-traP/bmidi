@@ -103,7 +103,16 @@ class SimpleObject:
 
 class CreateObject:
     # # datas
+    '''
+    # todo 参照渡しすべきは、以下の二つ
+    - base_entity
+    - value_entity
 
+    参照以外の代入が発生するのは、入力と、bake2blendのみなので、
+    - __init__
+    - # ## channel | anchor
+    をいじる。
+    '''
     class Channel:
         """旧CahnnelObject
         これは__init__でプロパティ分作られる"""
@@ -159,23 +168,6 @@ class CreateObject:
             print("At channel of", self.value_entity)
             print("No anchor at frame", frame)
             return
-
-    # todo memo: 一旦残して置いている。
-    """
-    class ChannelMaterial:
-        class Anchor:
-            def __init__(self, frame, value) -> None:
-                self.frame = frame
-                self.value = value
-
-        def __init__(
-            self,
-        ) -> None:
-            pass
-
-    class ChannelModifier:
-        pass
-    """
 
     class channelMatrix:
         pass
