@@ -103,16 +103,16 @@ class SimpleObject:
 
 class CreateObject:
     # # datas
-    '''
-    # todo 参照渡しすべきは、以下の二つ
-    - base_entity
+    """
+    todo 参照渡しすべきは、
     - value_entity
 
     参照以外の代入が発生するのは、入力と、bake2blendのみなので、
     - __init__
     - # ## channel | anchor
     をいじる。
-    '''
+    """
+
     class Channel:
         """旧CahnnelObject
         これは__init__でプロパティ分作られる"""
@@ -125,18 +125,18 @@ class CreateObject:
         def __init__(
             self,
             base_entity,
-            value_entity,
+            value_entity: list,
             data_path: str,
         ) -> None:
             self.base_entity = base_entity
-            self.value_entity = value_entity
+            self.value_entity:list = value_entity
             self.data_path = data_path
             self.anchors = []
 
         def add_anchor(self, frame, value):
             for i, anchor in enumerate(self.anchors):
                 if frame == anchor.frame:
-                    print("At channel of", self.value_entity)
+                    print("At channel of", self.value_entity[0])
                     print("There is a anchor already")
                     return
                 if frame < anchor.frame:
@@ -151,14 +151,14 @@ class CreateObject:
             index: int | None = None,
         ):
             if (frame == None) ^ (index == None):
-                print("At channel of", self.value_entity)
+                print("At channel of", self.value_entity[0])
                 print("Specify frame OR index.")
                 return
             if index != None:
                 try:
                     self.anchors.pop(index)
                 except IndexError:
-                    print("At channel of", self.value_entity)
+                    print("At channel of", self.value_entity[0])
                     print("Index out of range.")
                 return
             for i, anchor in enumerate(self.anchors):
@@ -188,19 +188,19 @@ class CreateObject:
         self.new_channel(
             name="location",
             base_entity=self.__object,
-            value_entity=self.__object.location,
+            value_entity=[self.__object.location],
             data_path="location",
         )
         self.new_channel(
             name="scale",
             base_entity=self.__object,
-            value_entity=self.__object.scale,
+            value_entity=[self.__object.scale],
             data_path="scale",
         )
         self.new_channel(
             name="rotation",
             base_entity=self.__object,
-            value_entity=self.__object.rotation_euler,
+            value_entity=[self.__object.rotation_euler],
             data_path="rotation_euler",
         )
 
