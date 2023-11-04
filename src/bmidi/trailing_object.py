@@ -8,7 +8,6 @@
 """
 
 import bpy
-import re
 
 
 # # BasicEndPoint
@@ -262,9 +261,7 @@ class CreateObject:
 
     # ## wraping new_channel
 
-    # todo >> >  >   >    >  ここから  <    <   <  < <<
-
-    def new_channel_object():
+    def new_channel_object(self, name, data_path):
         pass
 
     def new_channel_material():
