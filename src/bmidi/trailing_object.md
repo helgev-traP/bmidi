@@ -51,6 +51,9 @@ data_path はそのまま呼ぶ
 
 各タイプの違いはオブジェクト直下のメソッドで吸収出来れば吸収する
 
+**base_enntity, value_entity, data_pathはドットで分割された文字列。**
+そこに動的にアクセスする関数は作っておく。
+
 ### データ構造
 
 - CreateObject

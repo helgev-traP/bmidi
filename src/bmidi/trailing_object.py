@@ -9,6 +9,16 @@
 
 import bpy
 
+# # dynamic access to higher order attribute
+
+
+def getattr_h(instance, attribute: str):
+    pass
+
+
+def setattr_h(instance, attribute: str, value):
+    pass
+
 
 # # BasicEndPoint
 
@@ -266,7 +276,7 @@ class CreateObject:
         # link
         bpy.context.scene.collection.objects.link(self.__object)
 
-    # # Utilities
+    # # Blender Utilities
 
     def set_individual_material(self):
         pass
