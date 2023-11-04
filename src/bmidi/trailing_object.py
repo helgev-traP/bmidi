@@ -160,23 +160,6 @@ class CreateObject:
             print("No anchor at frame", frame)
             return
 
-    # todo memo: 一旦残して置いている。
-    """
-    class ChannelMaterial:
-        class Anchor:
-            def __init__(self, frame, value) -> None:
-                self.frame = frame
-                self.value = value
-
-        def __init__(
-            self,
-        ) -> None:
-            pass
-
-    class ChannelModifier:
-        pass
-    """
-
     class channelMatrix:
         pass
 
