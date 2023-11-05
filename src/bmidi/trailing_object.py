@@ -1,10 +1,7 @@
 """
-全てができるようにしようとすると
-結局BlenderAPIでやったほうが速い状況になるので、
-なるべく単純な構造体にする
+Usage:
 
-わざわざ構造体にしなくても関数の集まりでいいかも
--> Blenderのオブジェクトはクラスの中に作った方が安全ではある
+if __name__ == "__main__": の中
 """
 
 import bpy
@@ -223,17 +220,17 @@ class CreateObject:
         setattr_h(
             instance=self.__object,
             attribute_path="location",
-            value=location,
+            value=location if location != None else (0, 0, 0),
         )
         setattr_h(
             instance=self.__object,
             attribute_path="scale",
-            value=scale,
+            value=scale if scale != None else (1, 1, 1),
         )
         setattr_h(
             instance=self.__object,
             attribute_path="rotation_euler",
-            value=rotation,
+            value=rotation if rotation != None else (0, 0, 0),
         )
 
     # ## getters
@@ -363,11 +360,23 @@ if __name__ == "__main__":
         )
     if True:
         test_cube = CreateObject(
-            "test_cube", bpy.data.meshes["Cube"], (0, 0, 0), (1, 1, 1), (0, 0, 0)
+            name="test_cube",
+            mesh=bpy.data.meshes["Cube"],
+            location=(0, 0, 0),  # default value is (0,0,0)
+            scale=(1, 1, 1),  # default value is (1,1,1)
+            rotation=(0, 0, 0),  # default value is (0,0,0)
         )
 
-        test_cube.add_anchor(channel_name="location", frame=1, value=(0, 0, 0))
-        test_cube.add_anchor(channel_name="location", frame=150, value=(5, 5, 0))
+        test_cube.add_anchor(
+            channel_name="location",
+            frame=1,
+            value=(0, 0, 0),
+        )
+        test_cube.add_anchor(
+            channel_name="location",
+            frame=150,
+            value=(5, 5, 0),
+        )
 
         test_cube.bake2blend()
     print("Finish!")
