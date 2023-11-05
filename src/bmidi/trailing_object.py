@@ -1,6 +1,5 @@
 """
 Usage:
-
 if __name__ == "__main__": の中
 """
 
@@ -45,13 +44,13 @@ class BasicEndPoint:
         frame: int,
         location: list[float],
         scale: list[float],
-        euler: list[float],
+        rotation: list[float],
         alpha: float,
     ) -> None:
         self.frame = frame
         self.location = location
         self.scale = scale
-        self.euler = euler
+        self.rotation = rotation
         self.alpha = alpha
         return
 
@@ -84,7 +83,7 @@ class SimpleObject:
         bpy.context.scene.frame_set(start_from.frame)
         self.__object.location = start_from.location
         self.__object.scale = start_from.scale
-        self.__object.rotation_euler = start_from.euler
+        self.__object.rotation_euler = start_from.rotation
         self.__object.data.materials[0].node_tree.nodes["Principled BSDF"].inputs[
             21
         ].default_value = start_from.alpha
@@ -103,7 +102,7 @@ class SimpleObject:
         bpy.context.scene.frame_set(end_to.frame)
         self.__object.location = end_to.location
         self.__object.scale = end_to.scale
-        self.__object.rotation_euler = end_to.euler
+        self.__object.rotation_euler = end_to.rotation
         self.__object.data.materials[0].node_tree.nodes["Principled BSDF"].inputs[
             21
         ].default_value = end_to.alpha
@@ -360,14 +359,14 @@ if __name__ == "__main__":
                 frame=1,
                 location=[1, 1, 1],
                 scale=[1, 1, 1],
-                euler=[0, 0, 0],
+                rotation=[0, 0, 0],
                 alpha=1.0,
             ),
             end_to=BasicEndPoint(
                 frame=1,
                 location=[1, 1, 1],
                 scale=[1, 1, 1],
-                euler=[0, 0, 0],
+                rotation=[0, 0, 0],
                 alpha=1.0,
             ),
         )
