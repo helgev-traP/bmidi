@@ -335,7 +335,7 @@ class CreateObject:
 # # Usage Example
 
 if __name__ == "__main__":
-    # "Here is sample program. Nothing will happen in CLI!"
+    print("Here is sample program. Nothing will happen in CLI!")
     if False:
         sample = SimpleObject(
             name="sample",
@@ -356,9 +356,12 @@ if __name__ == "__main__":
             ),
         )
     if True:
-        test_cube = CreateObject("test_cube",bpy.data.meshes["Cube"],(0,0,0),(1,1,1),(0,0,0))
+        test_cube = CreateObject(
+            "test_cube", bpy.data.meshes["Cube"], (0, 0, 0), (1, 1, 1), (0, 0, 0)
+        )
 
-        test_cube.add_anchor(channel_name="location", frame=1, value=(0,0,0))
-        test_cube.add_anchor(channel_name="location", frame=150, value=(5,5,0))
+        test_cube.add_anchor(channel_name="location", frame=1, value=(0, 0, 0))
+        test_cube.add_anchor(channel_name="location", frame=150, value=(5, 5, 0))
 
         test_cube.bake2blend()
+    print("Finish!")
