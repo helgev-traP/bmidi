@@ -4,7 +4,7 @@ BlenderでMIDIを使ったアニメーションを楽に作れるようにする
 
 ## Blenderで使えるようにするには
 
-BlenderのPythonはBlenderで専用のものを持ってる。(中身は```bpy```がデフォルトで入ってる以外普通のPythonと同じだったはず)
+BlenderのPythonはBlenderで専用のものを持ってる。(中身は```bpy```とか```numpy```とかがデフォルトで入ってる以外普通のPythonと同じだったはず)
 
 BlenderのPythonが入ってるフォルダに行く。
 
@@ -12,7 +12,7 @@ BlenderのPythonが入ってるフォルダに行く。
 
 そこで、
 ```
-$ ./python.exe -m pip install {setup.pyがあるディレクトリ}
+$ ./python.exe -m pip install {bmidiのsetup.pyがあるディレクトリのパス}
 ```
 をやればBlenderのPythonに入る。
 
