@@ -14,18 +14,24 @@ import bpy
 
 # path無しはgetのみ
 def getattr_h(instance, attribute_path: str):
+    # trail empty path
     if attribute_path == "":
         return instance
+    # split
     attribute = attribute_path.split(".")
     for i in attribute:
-        instance = getattr(instance, i)
+        # handle head/end/doubled dot
+        if i != "":
+            instance = getattr(instance, i)
     return instance
 
 
 def setattr_h(instance, attribute_path: str, value):
     attribute = attribute_path.split(".")
     for i in range(len(attribute) - 1):
-        instance = getattr(instance, attribute[i])
+        # handle head/end/doubled dot
+        if i != "":
+            instance = getattr(instance, attribute[i])
     setattr(instance, attribute[-1], value)
 
 
