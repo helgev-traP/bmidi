@@ -12,12 +12,18 @@ import bpy
 # # dynamic access to higher order attribute
 
 
-def getattr_h(instance, attribute: str):
-    pass
+def getattr_h(instance, attribute_path: str):
+    attribute = attribute_path.split(".")
+    for i in attribute:
+        instance = getattr(instance, i)
+    return instance
 
 
-def setattr_h(instance, attribute: str, value):
-    pass
+def setattr_h(instance, attribute_path: str, value):
+    attribute = attribute_path.split(".")
+    for i in range(len(attribute) - 1):
+        instance = getattr(instance, attribute[i])
+    setattr(instance, attribute[-1], value)
 
 
 # # BasicEndPoint
