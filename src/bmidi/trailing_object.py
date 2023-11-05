@@ -238,7 +238,7 @@ class CreateObject:
 
     def get_channel_properties(self):
         """get channel' property"""
-        return [i.value_entity for i in self.channels.items()]
+        return [i.value_entity for i in self.channels.values()]
 
     # ## channel | anchor
 
@@ -304,7 +304,7 @@ class CreateObject:
     # # bake2blend
 
     def bake2blend(self):
-        for channel in self.channels.items():
+        for channel in self.channels.values():
             for anchor in channel.anchors:
                 bpy.context.scene.frame_set(anchor.frame)
                 # channel.value_entity = anchor.value
