@@ -60,7 +60,7 @@ class SimpleObject:
     """2点間の移動を簡単にいい感じにできる。宣言した瞬間にBlenderに焼き込んじゃう"""
 
     def __init__(
-        self, name, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
+        self, name: str, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
     ) -> None:
         # クラスの構造体を引数に取れるようにする
         self.__object = bpy.data.objects.new(name, mesh)
@@ -128,9 +128,9 @@ class CreateObject:
         これは__init__でプロパティ分作られる"""
 
         class Anchor:
-            def __init__(self, frame, value) -> None:
-                self.frame
-                self.value
+            def __init__(self, frame: int, value) -> None:
+                self.frame = frame
+                self.value = value
 
         def __init__(
             self,
@@ -143,7 +143,7 @@ class CreateObject:
             self.data_path: str = data_path
             self.anchors = []
 
-        def add_anchor(self, frame, value):
+        def add_anchor(self, frame: int, value):
             for i, anchor in enumerate(self.anchors):
                 if frame == anchor.frame:
                     print("At channel of", self.value_entity)
@@ -186,7 +186,7 @@ class CreateObject:
 
     def __init__(
         self,
-        name,
+        name: str,
         mesh,
         location: list[float] = None,
         scale: list[float] = None,
@@ -194,7 +194,7 @@ class CreateObject:
     ) -> None:
         self.__object = bpy.data.objects.new(name=name, object_data=mesh)
         self.channels = dict()
-        # ## ChannelObjectの規定値を入れておく
+        # ## location, scale, rotationの3つは規定値として入れておく。アンカーは入れない。
         self.new_channel(
             name="location",
             base_entity="",
@@ -212,6 +212,22 @@ class CreateObject:
             base_entity="",
             value_entity="rotation_euler",
             data_path="rotation_euler",
+        )
+        # ## Blender側にオブジェクトプロパティだけ伝えておく
+        setattr_h(
+            instance=self.__object,
+            attribute_path="location",
+            value=location,
+        )
+        setattr_h(
+            instance=self.__object,
+            attribute_path="scale",
+            value=scale,
+        )
+        setattr_h(
+            instance=self.__object,
+            attribute_path="rotation_euler",
+            value=rotation,
         )
 
     # ## getters
