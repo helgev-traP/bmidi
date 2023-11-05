@@ -182,9 +182,6 @@ class CreateObject:
             print("No anchor at frame", frame)
             return
 
-    class channelMatrix:
-        pass
-
     # # main
 
     def __init__(
