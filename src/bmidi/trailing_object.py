@@ -12,7 +12,10 @@ import bpy
 # # dynamic access to higher order attribute
 
 
+# path無しはgetのみ
 def getattr_h(instance, attribute_path: str):
+    if attribute_path == "":
+        return instance
     attribute = attribute_path.split(".")
     for i in attribute:
         instance = getattr(instance, i)
@@ -131,13 +134,13 @@ class CreateObject:
 
         def __init__(
             self,
-            base_entity,
-            value_entity,
+            base_entity: str,
+            value_entity: str,
             data_path: str,
         ) -> None:
-            self.base_entity = base_entity
-            self.value_entity = value_entity
-            self.data_path = data_path
+            self.base_entity: str = base_entity
+            self.value_entity: str = value_entity
+            self.data_path: str = data_path
             self.anchors = []
 
         def add_anchor(self, frame, value):
@@ -185,29 +188,29 @@ class CreateObject:
         self,
         name,
         mesh,
-        location=None,
-        scale=None,
-        rotation=None,
+        location: list[float] = None,
+        scale: list[float] = None,
+        rotation: list[float] = None,
     ) -> None:
         self.__object = bpy.data.objects.new(name=name, object_data=mesh)
         self.channels = dict()
         # ## ChannelObjectの規定値を入れておく
         self.new_channel(
             name="location",
-            base_entity=self.__object,
-            value_entity=self.__object.location,
+            base_entity="",
+            value_entity="location",
             data_path="location",
         )
         self.new_channel(
             name="scale",
-            base_entity=self.__object,
-            value_entity=self.__object.scale,
+            base_entity="",
+            value_entity="scale",
             data_path="scale",
         )
         self.new_channel(
             name="rotation",
-            base_entity=self.__object,
-            value_entity=self.__object.rotation_euler,
+            base_entity="",
+            value_entity="rotation_euler",
             data_path="rotation_euler",
         )
 
@@ -223,8 +226,11 @@ class CreateObject:
 
     # ## channel | anchor
 
-    def new_channel(self, name, base_entity, value_entity, data_path: str):
+    def new_channel(
+        self, name: str, base_entity: str, value_entity: str, data_path: str
+    ):
         """"""
+        # todo ここの衝突回避が生きているかチェック
         # check name
         if name in self.get_channel_names():
             print("name:", name, "is already be used.")
@@ -241,21 +247,31 @@ class CreateObject:
         )
         return
 
-    def rename_channel(self, name, new_name):
+    def rename_channel(self, name: str, new_name: str):
         channel = self.channels.pop(name, None)
         if channel == None:
             print("No channel has such name:", name)
             return
         self.channels[new_name] = channel
 
-    def del_channel(self, channel_name):
+    def del_channel(self, channel_name: str):
         if self.channels.pop(channel_name, None) == None:
             print("No channel has such name:", channel_name)
 
-    def add_anchor(self, channel_name, frame, value):
+    def add_anchor(
+        self,
+        channel_name: str,
+        frame: int,
+        value: int | float | list,
+    ):
         self.channels[channel_name].add_anchor(frame=frame, value=value)
 
-    def del_anchor(self, channel_name, frame=None, index=None):
+    def del_anchor(
+        self,
+        channel_name: str,
+        frame: int | None = None,
+        index: int | None = None,
+    ):
         self.channels[channel_name].del_anchor(frame=frame, index=index)
 
     # ## wraping new_channel
@@ -275,10 +291,19 @@ class CreateObject:
         for channel in self.channels.items():
             for anchor in channel.anchors:
                 bpy.context.scene.frame_set(anchor.frame)
-                channel.value_entity = anchor.value
-                channel.base_entity.keyframe_insert(
-                    data_path=channel.data_path, index=-1
+                # channel.value_entity = anchor.value
+                setattr_h(
+                    instance=self.__object,
+                    attribute_path=channel.value_entity,
+                    value=anchor.value,
                 )
+                # channel.base_entity.keyframe_insert(
+                #     data_path=channel.data_path, index=-1
+                # )
+                getattr_h(
+                    instance=self.__object,
+                    attribute_path=channel.base_entity + ".keyframe_insert",
+                )(data_path=channel.data_path, index=-1)
         # link
         bpy.context.scene.collection.objects.link(self.__object)
 
