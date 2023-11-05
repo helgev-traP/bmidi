@@ -15,9 +15,11 @@ BlenderのPythonが入ってるフォルダに行く。
 普通は```C:\Program Files\Blender Foundation\Blender 3.x\3.x\python\bin```みたいなところにある。
 
 そこで、
+
 ```
-$ ./python.exe -m pip install {bmidiのsetup.pyがあるディレクトリのパス}
+./python.exe -m pip install {bmidiのsetup.pyがあるディレクトリのパス}
 ```
+
 をやればBlenderのPythonに入る。
 
 するとBlender内でimportとかできるようになる。
