@@ -292,13 +292,29 @@ class CreateObject:
 
     # ## wraping new_channel
 
-    def new_channel_object(self, name, data_path):
-        pass
+    def new_channel_object(self, name, object_property):
+        self.new_channel(
+            name=name,
+            base_entity="",
+            value_entity=object_property,
+            data_path=object_property,
+        )
 
-    def new_channel_material():
-        pass
+    def new_channel_material(self, name, material_input):
+        self.new_channel(
+            name=name,
+            base_entity=material_input,
+            value_entity=material_input + "default_value",
+            data_path="default_value",
+        )
 
-    def new_channel_modifier():
+    def new_channel_modifier(self, name, modifier_entity, modifier_property):
+        self.new_channel(
+            name=name,
+            base_entity=modifier_entity,
+            value_entity=modifier_entity + modifier_property,
+            data_path=modifier_property,
+        )
         pass
 
     # # bake2blend
