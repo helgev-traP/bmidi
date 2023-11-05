@@ -318,7 +318,7 @@ class CreateObject:
                 # )
                 getattr_h(
                     instance=self.__object,
-                    attribute_path=channel.base_entity + ".keyframe_insert",
+                    attribute_path=channel.base_entity + "keyframe_insert",
                 )(data_path=channel.data_path, index=-1)
         # link
         bpy.context.scene.collection.objects.link(self.__object)
@@ -335,22 +335,30 @@ class CreateObject:
 # # Usage Example
 
 if __name__ == "__main__":
-    print("Here is sample program. Nothing will happen in CLI!")
-    sample = SimpleObject(
-        name="sample",
-        mesh=bpy.data.meshes.new(),
-        start_from=BasicEndPoint(
-            frame=1,
-            location=[1, 1, 1],
-            scale=[1, 1, 1],
-            euler=[0, 0, 0],
-            alpha=1.0,
-        ),
-        end_to=BasicEndPoint(
-            frame=1,
-            location=[1, 1, 1],
-            scale=[1, 1, 1],
-            euler=[0, 0, 0],
-            alpha=1.0,
-        ),
-    )
+    # "Here is sample program. Nothing will happen in CLI!"
+    if False:
+        sample = SimpleObject(
+            name="sample",
+            mesh=bpy.data.meshes.new(),
+            start_from=BasicEndPoint(
+                frame=1,
+                location=[1, 1, 1],
+                scale=[1, 1, 1],
+                euler=[0, 0, 0],
+                alpha=1.0,
+            ),
+            end_to=BasicEndPoint(
+                frame=1,
+                location=[1, 1, 1],
+                scale=[1, 1, 1],
+                euler=[0, 0, 0],
+                alpha=1.0,
+            ),
+        )
+    if True:
+        test_cube = CreateObject("test_cube",bpy.data.meshes["Cube"],(0,0,0),(1,1,1),(0,0,0))
+
+        test_cube.add_anchor(channel_name="location", frame=1, value=(0,0,0))
+        test_cube.add_anchor(channel_name="location", frame=150, value=(5,5,0))
+
+        test_cube.bake2blend()
