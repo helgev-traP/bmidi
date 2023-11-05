@@ -1,14 +1,35 @@
 """
-全てができるようにしようとすると
-結局BlenderAPIでやったほうが速い状況になるので、
-なるべく単純な構造体にする
+Usage:
 
-わざわざ構造体にしなくても関数の集まりでいいかも
--> Blenderのオブジェクトはクラスの中に作った方が安全ではある
+if __name__ == "__main__": の中
 """
 
 import bpy
-import re
+
+# # dynamic access to higher order attribute
+
+
+# path無しはgetのみ
+def getattr_h(instance, attribute_path: str):
+    # trail empty path
+    if attribute_path == "":
+        return instance
+    # split
+    attribute = attribute_path.split(".")
+    for i in attribute:
+        # handle head/end/doubled dot
+        if i != "":
+            instance = getattr(instance, i)
+    return instance
+
+
+def setattr_h(instance, attribute_path: str, value):
+    attribute = attribute_path.split(".")
+    for i in range(len(attribute) - 1):
+        # handle head/end/doubled dot
+        if i != "":
+            instance = getattr(instance, attribute[i])
+    setattr(instance, attribute[-1], value)
 
 
 # # BasicEndPoint
@@ -42,7 +63,7 @@ class SimpleObject:
     """2点間の移動を簡単にいい感じにできる。宣言した瞬間にBlenderに焼き込んじゃう"""
 
     def __init__(
-        self, name, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
+        self, name: str, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
     ) -> None:
         # クラスの構造体を引数に取れるようにする
         self.__object = bpy.data.objects.new(name, mesh)
@@ -103,135 +124,272 @@ class SimpleObject:
 
 
 class CreateObject:
-    """
-    アンカーのデータ構造について
-    [CreateObject].__object: BlenderObject
-    [CreateObject].channels: dict[Channel]
-    [Channel].obj_propatie: propatie
-    [Channel].anchors: list[Anchor]
-    [Anchor].frame: int
-    [Anchor].value: float | list[float]
+    # # datas
 
-    propertyが予約語と衝突するので、それだけはobj_propertyにする
-    """
-
-    # todo オブジェクトプロパティとモディファイアプロパティはdefault_valueで管理されていないのでそれ用のものを作る
-
-    """
-    各パラメータのデータタイプについて
-    オブジェクトプロパティ
-        <class 'Vector'>
-    マテリアルプロパティ
-        <class 'bpy.types.NodeSocket{パラメータ名}'>
-    モディファイアプロパティ
-        <class 'bpy.types.{モディファイア名}Modifier'>
-    全部全体マッチでいける
-    """
-
-    # ## Anchors
     class Channel:
-        """channel"""
+        """旧CahnnelObject
+        これは__init__でプロパティ分作られる"""
 
         class Anchor:
-            """anchor"""
-
-            def __init__(self, frame, value) -> None:
+            def __init__(self, frame: int, value) -> None:
                 self.frame = frame
                 self.value = value
 
-        def __init__(self, obj_property) -> None:
-            """なるべく汎用にする"""
-            self.obj_property = obj_property
-            self.anchors: list = []
+        def __init__(
+            self,
+            base_entity: str,
+            value_entity: str,
+            data_path: str,
+        ) -> None:
+            self.base_entity: str = base_entity
+            self.value_entity: str = value_entity
+            self.data_path: str = data_path
+            self.anchors = []
 
-        def add_anchor(self, frame, value):
-            """add anchor"""
+        def add_anchor(self, frame: int, value):
             for i, anchor in enumerate(self.anchors):
                 if frame == anchor.frame:
-                    print("This frame already exists a anchor.")
+                    print("At channel of", self.value_entity)
+                    print("There is a anchor already")
                     return
                 if frame < anchor.frame:
                     self.anchors.insert(i, self.Anchor(frame=frame, value=value))
                     return
             self.anchors.append(self.Anchor(frame=frame, value=value))
+            return
 
-    # ## main
-    def __init__(self, name, mesh) -> None:
-        """オブジェクトとアンカーのみを持つ"""
-        self.__object = bpy.data.meshes.new(name, mesh)
+        def del_anchor(
+            self,
+            frame: int | None = None,
+            index: int | None = None,
+        ):
+            if (frame == None) ^ (index == None):
+                print("At channel of", self.value_entity)
+                print("Specify frame OR index.")
+                return
+            if index != None:
+                try:
+                    self.anchors.pop(index)
+                except IndexError:
+                    print("At channel of", self.value_entity)
+                    print("Index out of range.")
+                return
+            for i, anchor in enumerate(self.anchors):
+                if frame == anchor.frame:
+                    self.anchors.pop(i)
+                    return
+            print("At channel of", self.value_entity)
+            print("No anchor at frame", frame)
+            return
+
+    # # main
+
+    def __init__(
+        self,
+        name: str,
+        mesh,
+        location: list[float] = None,
+        scale: list[float] = None,
+        rotation: list[float] = None,
+    ) -> None:
+        self.__object = bpy.data.objects.new(name=name, object_data=mesh)
         self.channels = dict()
+        # ## location, scale, rotationの3つは規定値として入れておく。アンカーは入れない。
+        self.new_channel(
+            name="location",
+            base_entity="",
+            value_entity="location",
+            data_path="location",
+        )
+        self.new_channel(
+            name="scale",
+            base_entity="",
+            value_entity="scale",
+            data_path="scale",
+        )
+        self.new_channel(
+            name="rotation",
+            base_entity="",
+            value_entity="rotation_euler",
+            data_path="rotation_euler",
+        )
+        # ## Blender側にオブジェクトプロパティだけ伝えておく
+        setattr_h(
+            instance=self.__object,
+            attribute_path="location",
+            value=location if location != None else (0, 0, 0),
+        )
+        setattr_h(
+            instance=self.__object,
+            attribute_path="scale",
+            value=scale if scale != None else (1, 1, 1),
+        )
+        setattr_h(
+            instance=self.__object,
+            attribute_path="rotation_euler",
+            value=rotation if rotation != None else (0, 0, 0),
+        )
 
-    # ## geters
+    # ## getters
+
     def get_channel_names(self):
         """get channels' key"""
         return self.channels.keys()
 
     def get_channel_properties(self):
         """get channel' property"""
-        return [i.obj_property for i in self.channels.items()]
+        return [i.value_entity for i in self.channels.values()]
 
-    # ## channels
-    def new_channel(self, name, obj_property):
-        """プロパティ本体をchannel構造体に持たせる"""
+    # ## channel | anchor
+
+    def new_channel(
+        self, name: str, base_entity: str, value_entity: str, data_path: str
+    ):
+        """"""
+        # todo ここの衝突回避が生きているかチェック
+        # check name
         if name in self.get_channel_names():
             print("name:", name, "is already be used.")
             return
-        if obj_property in self.get_channel_properties():
-            print("property:", obj_property, "already exist")
+        # check property
+        if value_entity in self.get_channel_properties():
+            print("channel of property", value_entity, "is already exist.")
             return
-        self.channels[name] = self.Channel(obj_property=obj_property)
+        # add
+        self.channels[name] = self.Channel(
+            base_entity=base_entity,
+            value_entity=value_entity,
+            data_path=data_path,
+        )
+        return
 
-    def add_anchor(self, name, frame, value):
-        """channel の中の add_anchor に繋げる"""
-        self.channels[name].add_anchor(frame=frame, value=value)
+    def rename_channel(self, name: str, new_name: str):
+        channel = self.channels.pop(name, None)
+        if channel == None:
+            print("No channel has such name:", name)
+            return
+        self.channels[new_name] = channel
+
+    def del_channel(self, channel_name: str):
+        if self.channels.pop(channel_name, None) == None:
+            print("No channel has such name:", channel_name)
+
+    def add_anchor(
+        self,
+        channel_name: str,
+        frame: int,
+        value: int | float | list,
+    ):
+        self.channels[channel_name].add_anchor(frame=frame, value=value)
+
+    def del_anchor(
+        self,
+        channel_name: str,
+        frame: int | None = None,
+        index: int | None = None,
+    ):
+        self.channels[channel_name].del_anchor(frame=frame, index=index)
+
+    # ## wraping new_channel
+
+    def new_channel_object(self, name, object_property):
+        self.new_channel(
+            name=name,
+            base_entity="",
+            value_entity=object_property,
+            data_path=object_property,
+        )
+
+    def new_channel_material(self, name, material_input):
+        self.new_channel(
+            name=name,
+            base_entity=material_input,
+            value_entity=material_input + "default_value",
+            data_path="default_value",
+        )
+
+    def new_channel_modifier(self, name, modifier_entity, modifier_property):
+        self.new_channel(
+            name=name,
+            base_entity=modifier_entity,
+            value_entity=modifier_entity + modifier_property,
+            data_path=modifier_property,
+        )
+        pass
+
+    # # bake2blend
 
     def bake2blend(self):
-        """Bake all anchors to Blender"""
-        for channel in self.channels.items():
-            obj_property = channel.obj_property
-            anchors = channel.anchors
-            data_type = str(type(obj_property))
-            # todo ここはデータ構造の変更に伴って改築する
-            if re.fullmatch("<class 'Vector'>",data_type) != None:
-                # object
-                pass
-            elif re.fullmatch("<class 'bpy.types.NodeSocket[a-zA-Z]*'>",data_type) != None:
-                # Material
-                for anchor in anchors:
-                    bpy.context.scene.frame_set(anchor.frame)
-                    obj_property.default_value = anchor.value
-                    obj_property.keyframe_insert(data_path="default_value", index=-1)
-            elif re.fullmatch("<class 'bpy.types.[a-zA-Z]*Modifier'>",data_type) != None:
-                # Modifier
-                for anchor in anchors:
-                    bpy.context.scene.frame_set(anchor.frame)
-                    obj_property = anchor.value
-                    obj_property.keyframe_insert(data_path="?", index=-1)
-            else:
-                print("property:", obj_property, "is not supported.")
-                pass
-            
+        for channel in self.channels.values():
+            for anchor in channel.anchors:
+                bpy.context.scene.frame_set(anchor.frame)
+                # channel.value_entity = anchor.value
+                setattr_h(
+                    instance=self.__object,
+                    attribute_path=channel.value_entity,
+                    value=anchor.value,
+                )
+                # channel.base_entity.keyframe_insert(
+                #     data_path=channel.data_path, index=-1
+                # )
+                getattr_h(
+                    instance=self.__object,
+                    attribute_path=channel.base_entity + "keyframe_insert",
+                )(data_path=channel.data_path, index=-1)
+        # link
+        bpy.context.scene.collection.objects.link(self.__object)
+
+    # # Blender Utilities
+
+    def set_individual_material(self):
+        pass
+
+    def add_modifier(self):
+        pass
 
 
 # # Usage Example
 
 if __name__ == "__main__":
     print("Here is sample program. Nothing will happen in CLI!")
-    sample = SimpleObject(
-        name="sample",
-        mesh=bpy.data.meshes.new(),
-        start_from=BasicEndPoint(
+    if False:
+        sample = SimpleObject(
+            name="sample",
+            mesh=bpy.data.meshes.new(),
+            start_from=BasicEndPoint(
+                frame=1,
+                location=[1, 1, 1],
+                scale=[1, 1, 1],
+                euler=[0, 0, 0],
+                alpha=1.0,
+            ),
+            end_to=BasicEndPoint(
+                frame=1,
+                location=[1, 1, 1],
+                scale=[1, 1, 1],
+                euler=[0, 0, 0],
+                alpha=1.0,
+            ),
+        )
+    if True:
+        test_cube = CreateObject(
+            name="test_cube",
+            mesh=bpy.data.meshes["Cube"],
+            location=(0, 0, 0),  # default value is (0,0,0)
+            scale=(1, 1, 1),  # default value is (1,1,1)
+            rotation=(0, 0, 0),  # default value is (0,0,0)
+        )
+
+        test_cube.add_anchor(
+            channel_name="location",
             frame=1,
-            location=[1, 1, 1],
-            scale=[1, 1, 1],
-            euler=[0, 0, 0],
-            alpha=1.0,
-        ),
-        end_to=BasicEndPoint(
-            frame=1,
-            location=[1, 1, 1],
-            scale=[1, 1, 1],
-            euler=[0, 0, 0],
-            alpha=1.0,
-        ),
-    )
+            value=(0, 0, 0),
+        )
+        test_cube.add_anchor(
+            channel_name="location",
+            frame=150,
+            value=(5, 5, 0),
+        )
+
+        test_cube.bake2blend()
+    print("Finish!")
