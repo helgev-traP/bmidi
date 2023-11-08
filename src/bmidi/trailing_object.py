@@ -10,6 +10,7 @@ import bpy
 
 # path無しはgetのみ
 def getattr_h(instance, attribute_path: str):
+    '''wrap getattr'''
     # trail empty path
     if attribute_path == "":
         return instance
@@ -23,6 +24,7 @@ def getattr_h(instance, attribute_path: str):
 
 
 def setattr_h(instance, attribute_path: str, value):
+    '''wrap setattr'''
     attribute = attribute_path.split(".")
     for i in range(len(attribute) - 1):
         # handle head/end/doubled dot
@@ -126,9 +128,6 @@ class CreateObject:
     # # datas
 
     class Channel:
-        """旧CahnnelObject
-        これは__init__でプロパティ分作られる"""
-
         class Anchor:
             def __init__(self, frame: int, value) -> None:
                 self.frame = frame
@@ -314,7 +313,6 @@ class CreateObject:
             value_entity=modifier_entity + modifier_property,
             data_path=modifier_property,
         )
-        pass
 
     # # bake2blend
 

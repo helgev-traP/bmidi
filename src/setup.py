@@ -1,5 +1,3 @@
-from setuptools import setup, find_packages
-
 '''
 メジャーバージョン:
 v0:
@@ -9,6 +7,8 @@ Pythonからある程度Blenderのオブジェクトが扱える
 v2:
 GUIで操作できるようにする。アドオン化を狙う
 '''
+
+from setuptools import setup, find_packages
 
 setup(
     name='bmidi',
