@@ -4,33 +4,7 @@ if __name__ == "__main__": の中
 """
 
 import bpy
-
-# # dynamic access to higher order attribute
-
-
-# path無しはgetのみ
-def getattr_h(instance, attribute_path: str):
-    '''wrap getattr'''
-    # trail empty path
-    if attribute_path == "":
-        return instance
-    # split
-    attribute = attribute_path.split(".")
-    for i in attribute:
-        # handle head/end/doubled dot
-        if i != "":
-            instance = getattr(instance, i)
-    return instance
-
-
-def setattr_h(instance, attribute_path: str, value):
-    '''wrap setattr'''
-    attribute = attribute_path.split(".")
-    for i in range(len(attribute) - 1):
-        # handle head/end/doubled dot
-        if i != "":
-            instance = getattr(instance, attribute[i])
-    setattr(instance, attribute[-1], value)
+from .attribute_access import getattr_h, setattr_h
 
 
 # # BasicEndPoint
