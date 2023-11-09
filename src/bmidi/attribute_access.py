@@ -1,5 +1,7 @@
 '''wrapping get/setattr to access to inner class method.'''
 
+import re
+
 # path無しはgetのみ
 def getattr_h(instance, attribute_path: str):
     '''wrap getattr'''
@@ -9,9 +11,13 @@ def getattr_h(instance, attribute_path: str):
     # split
     attribute = attribute_path.split(".")
     for i in attribute:
-        # handle head/end/doubled dot
+        # handle head/end/doubled dot.
         if i != "":
-            instance = getattr(instance, i)
+            if re.fullmatch(R"[a-zA-Z_]+", i) is not None:
+                instance = getattr(instance, i)
+            if re.fullmatch(R"[a-zA-Z_]+\[[0-9]+\]", i) is not None:
+                instance = getattr(instance, re.split(R"[\[\]]", i)[0])
+                instance = instance[int(re.split(R"[\[\]]", i)[1])]
     return instance
 
 
@@ -21,5 +27,9 @@ def setattr_h(instance, attribute_path: str, value):
     for i in range(len(attribute) - 1):
         # handle head/end/doubled dot
         if i != "":
-            instance = getattr(instance, attribute[i])
+            if re.fullmatch(R"[a-zA-Z_]+", i) is not None:
+                instance = getattr(instance, i)
+            if re.fullmatch(R"[a-zA-Z_]+\[[0-9]+\]", i) is not None:
+                instance = getattr(instance, re.split(R"[\[\]]", i)[0])
+                instance = instance[int(re.split(R"[\[\]]", i)[1])]
     setattr(instance, attribute[-1], value)
