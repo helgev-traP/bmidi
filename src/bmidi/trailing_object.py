@@ -33,8 +33,54 @@ class BasicEndPoint:
 
 # # SimpleObjectClass
 
-
 class SimpleObject:
+    '''2点間の移動のみ'''
+    def __init__(
+        self, name: str, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
+    ) -> None:
+        self.object = CreateObject(name=name, mesh=mesh)
+        # 1
+        # todo alphaを0に
+        # 2
+        # todo alphaをalpha_1に
+        self.object.add_anchor(
+            channel_name="location",
+            frame=start_from.frame,
+            value=start_from.location,
+        )
+        self.object.add_anchor(
+            channel_name="scale",
+            frame=start_from.frame,
+            value=start_from.scale,
+        )
+        self.object.add_anchor(
+            channel_name="rotation",
+            frame=start_from.frame,
+            value=start_from.rotation,
+        )
+        # 3
+        # todo alphaをalpha_2に
+        self.object.add_anchor(
+            channel_name="location",
+            frame=end_to.frame,
+            value=end_to.location,
+        )
+        self.object.add_anchor(
+            channel_name="scale",
+            frame=end_to.frame,
+            value=end_to.scale,
+        )
+        self.object.add_anchor(
+            channel_name="rotation",
+            frame=end_to.frame,
+            value=end_to.rotation,
+        )
+        # 4
+        # todo alphaを0に
+        # bake
+        self.object.bake2blend()
+
+class SimpleObject_old:
     """2点間の移動を簡単にいい感じにできる。宣言した瞬間にBlenderに焼き込んじゃう"""
 
     def __init__(
