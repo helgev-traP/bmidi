@@ -15,7 +15,7 @@ import mido
 class ReadTrack:
     def __init__(self, path, fix=False) -> None:
         self.path = path
-        self.Messages = []
+        self.messages = []
         self.bpm = -1
         self.ticks_per_beat = -1
         self.fps = -1
@@ -31,6 +31,12 @@ class ReadTrack:
         self.fps = fps
 
     def convert(self, focus_on=[]) -> None:
+        # self.Messages を空にする
+
+        self.messages.clear()
+
+        #
+
         focus_all = (lambda focus_list: True if len(focus_list) == 0 else False)(
             focus_on
         )
@@ -41,7 +47,7 @@ class ReadTrack:
 
         # read bpm
 
-        # ! ソフランに対応してないので、V0.2で直す
+        # todo ソフランに対応してないので、V0.2で直す
         if self.bpm == -1:
             for i in range(len(midi_meta_raw)):
                 if midi_meta_raw[i].type == "set_tempo":
@@ -72,7 +78,7 @@ class ReadTrack:
             if midi_track_raw[i].type in focus_on or focus_all:
                 if midi_track_raw[i].type in ["note_on", "note_off"]:
                     # ## note_on/off
-                    self.Messages.append(
+                    self.messages.append(
                         {
                             "type": midi_track_raw[i].type,
                             "note": midi_track_raw[i].note,
@@ -85,7 +91,7 @@ class ReadTrack:
                     )
                 elif midi_track_raw[i].type in ["control_change"]:
                     # ## control change
-                    self.Messages.append(
+                    self.messages.append(
                         {
                             "type": midi_track_raw[i].type,
                             "control": midi_track_raw[i].control,
@@ -98,7 +104,7 @@ class ReadTrack:
                     )
                 else:
                     # ## else
-                    self.Messages.append(
+                    self.messages.append(
                         {
                             "type": "else",
                             "frame": accumulate_ticks

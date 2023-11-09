@@ -4,31 +4,7 @@ if __name__ == "__main__": の中
 """
 
 import bpy
-
-# # dynamic access to higher order attribute
-
-
-# path無しはgetのみ
-def getattr_h(instance, attribute_path: str):
-    # trail empty path
-    if attribute_path == "":
-        return instance
-    # split
-    attribute = attribute_path.split(".")
-    for i in attribute:
-        # handle head/end/doubled dot
-        if i != "":
-            instance = getattr(instance, i)
-    return instance
-
-
-def setattr_h(instance, attribute_path: str, value):
-    attribute = attribute_path.split(".")
-    for i in range(len(attribute) - 1):
-        # handle head/end/doubled dot
-        if i != "":
-            instance = getattr(instance, attribute[i])
-    setattr(instance, attribute[-1], value)
+from .attribute_access import getattr_h, setattr_h
 
 
 # # BasicEndPoint
@@ -126,9 +102,6 @@ class CreateObject:
     # # datas
 
     class Channel:
-        """旧CahnnelObject
-        これは__init__でプロパティ分作られる"""
-
         class Anchor:
             def __init__(self, frame: int, value) -> None:
                 self.frame = frame
@@ -314,7 +287,6 @@ class CreateObject:
             value_entity=modifier_entity + modifier_property,
             data_path=modifier_property,
         )
-        pass
 
     # # bake2blend
 
