@@ -3,8 +3,9 @@ Usage:
 if __name__ == "__main__": の中
 """
 
+import sys
 import bpy
-from .attribute_access import getattr_h, setattr_h
+from attribute_access import *
 
 
 # # BasicEndPoint
