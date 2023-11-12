@@ -1,5 +1,3 @@
-import mido
-
 """
 必要な物:
 - MIDIファイルのパス
@@ -9,7 +7,7 @@ import mido
 - FPS
 """
 
-"""クラス名あとでいい感じにする"""
+import mido
 
 
 class MidiTrack:
