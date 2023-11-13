@@ -1,5 +1,3 @@
-import mido
-
 """
 必要な物:
 - MIDIファイルのパス
@@ -9,10 +7,10 @@ import mido
 - FPS
 """
 
-"""クラス名あとでいい感じにする"""
+import mido
 
 
-class ReadTrack:
+class MidiTrack:
     def __init__(self, path, fix=False) -> None:
         self.path = path
         self.messages = []
