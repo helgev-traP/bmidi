@@ -17,7 +17,15 @@ Cakewalkのデフォルト出力はフォーマット1
 
 ### set_tempoについて
 
+set_tempoの値は四分音符の長さ(マイクロ秒)
 
+```python
+BPM = 6 * (10 ** 7) / set_tempo
+```
+
+```python
+time = tick * set_tempo / (ticks_per_beat * 10 ** 6)
+```
 
 ## midoの構造
 
@@ -89,6 +97,7 @@ Cakewalkのデフォルト出力はフォーマット1
 
 自分で構造体は用意する
 MIDIと似た形で、MIDIに新しく情報を追加しながらDPで処理できるような構造にする
+midoがなんか変な感じになってるので自分で構造体を作る
 
 - Score
   - ticks_per_beat
@@ -98,3 +107,77 @@ MIDIと似た形で、MIDIに新しく情報を追加しながらDPで処理で�
        - Message == BPMのときは現在の秒数を追加
        - ticksには累積のtick
 
+### 構成
+
+- Score
+  - name
+  - filepath
+  - ticks_per_beat
+  - message
+    - type
+    - value: dict
+
+#### Messageについて
+
+- message
+  - type == time_signature
+  - value: dict
+    - numerator
+    - denominator
+    - clocks_per_click
+    - notated_32nd_notes_per_beat
+    - time
+
+- message
+  - type == key_signature
+  - value: dict
+    - key
+    - time
+
+- message
+  - type == set_tempo
+  - value: dict
+    - tempo
+    - time
+
+- message
+  - type == end_of_track
+  - value
+    - time
+
+- message
+  - type == track_name
+  - value: dict
+    - name
+    - time
+
+- message
+  - type == note_on
+  - value: dict
+    - channel
+    - note
+    - velocity
+    - time
+
+- message
+  - type == note_off
+  - value: dict
+    - channel
+    - note
+    - velocity // 通常は無視
+    - tiem
+
+- message
+  - type == pitchwheel
+  - value: dict
+    - channel
+    - pitch
+    - time
+
+- message
+  - type == control_change
+  - value: dict
+    - channel
+    - control
+    - value
+    - time
