@@ -33,16 +33,33 @@ class BasicEndPoint:
 
 # # SimpleObjectClass
 
+
 class SimpleObject:
-    '''2点間の移動のみ'''
+    """2点間の移動のみ"""
+
     def __init__(
         self, name: str, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
     ) -> None:
+        # todo 動くかチェック
         self.object = CreateObject(name=name, mesh=mesh)
+        self.object.new_channel_material(
+            name="alpha",
+            material_input='data.materials["Material"].node_tree.nodes["Principled BSDF"].inputs[21]',
+        )
         # 1
         # todo alphaを0に
+        self.object.add_anchor(
+            channel_name="alpha",
+            frame=start_from.frame - 1,
+            value=0.0,
+        )
         # 2
         # todo alphaをalpha_1に
+        self.object.add_anchor(
+            channel_name="alpha",
+            frame=start_from.frame,
+            value=start_from.alpha,
+        )
         self.object.add_anchor(
             channel_name="location",
             frame=start_from.frame,
@@ -61,6 +78,11 @@ class SimpleObject:
         # 3
         # todo alphaをalpha_2に
         self.object.add_anchor(
+            channel_name="alpha",
+            frame=end_to.frame,
+            value=end_to.alpha,
+        )
+        self.object.add_anchor(
             channel_name="location",
             frame=end_to.frame,
             value=end_to.location,
@@ -77,8 +99,14 @@ class SimpleObject:
         )
         # 4
         # todo alphaを0に
+        self.object.add_anchor(
+            channel_name="alpha",
+            frame=end_to.frame + 1,
+            value=0.0,
+        )
         # bake
         self.object.bake2blend()
+
 
 class SimpleObject_old:
     """2点間の移動を簡単にいい感じにできる。宣言した瞬間にBlenderに焼き込んじゃう"""
