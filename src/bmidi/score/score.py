@@ -47,7 +47,7 @@ class Score:
 
         # # reject format 2
         if midi_file.type not in [0, 1]:
-            print(f'At socre "{self.name}", midi file format is not 0 or 1.')
+            print(f'At score "{self.name}", midi file format is not 0 or 1.')
             return False
 
         # # read meta
