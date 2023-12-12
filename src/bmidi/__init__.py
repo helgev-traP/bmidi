@@ -18,4 +18,4 @@ from object_score import *
 from motion_cut import *
 
 # help
-from help import *
+from help_module import *
