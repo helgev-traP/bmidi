@@ -48,15 +48,15 @@ def help():
 
     # create object
     print("CreateObject")
-    for i in CreateObject.__dict__:
-        if type(getattr(CreateObject, i)) == func:
+    for i in Object.__dict__:
+        if type(getattr(Object, i)) == func:
             print("\t", YELLOW + i + END, end="")
             print(
                 " ->" + GREEN,
-                signature(getattr(CreateObject, i)).return_annotation,
+                signature(getattr(Object, i)).return_annotation,
                 END,
             )
-            for j in signature(getattr(CreateObject, i)).parameters:
+            for j in signature(getattr(Object, i)).parameters:
                 print("\t\t" + CYAN, j, END)
         else:
             print("\t", i)

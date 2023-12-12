@@ -6,11 +6,13 @@ if __name__ == "__main__": の中
 import bpy
 from attribute_access import *
 
+# todo only for development
+# from ..attribute_access.attribute_access import *
 
 # # BasicEndPoint
 
 
-class BasicEndPoint:
+class SimpleObjectEndPoint:
     """関数間の受け渡しでいい感じにレベル分けするためのもの"""
 
     # クラス名あとでいい感じにする
@@ -38,10 +40,10 @@ class SimpleObject:
     """2点間の移動のみ"""
 
     def __init__(
-        self, name: str, mesh, start_from: BasicEndPoint, end_to: BasicEndPoint
+        self, name: str, mesh, start_from: SimpleObjectEndPoint, end_to: SimpleObjectEndPoint
     ) -> None:
         # todo 動くかチェック
-        self.object = CreateObject(name=name, mesh=mesh)
+        self.object = Object(name=name, mesh=mesh)
         self.object.new_channel_material(
             name="alpha",
             material_input='data.materials["Material"].node_tree.nodes["Principled BSDF"].inputs[21]',
@@ -111,7 +113,7 @@ class SimpleObject:
 # # ExtendedObject
 
 
-class CreateObject:
+class Object:
     # # datas
 
     class Channel:
@@ -334,20 +336,22 @@ class CreateObject:
 
 # # Usage Example
 
+# todo 以下の内容を__init__.pyか他のチュートリアルのモジュールに置く
+
 if __name__ == "__main__":
     print("Here is sample program. Nothing will happen in CLI!")
     if False:
         sample = SimpleObject(
             name="sample",
             mesh=bpy.data.meshes.new(),
-            start_from=BasicEndPoint(
+            start_from=SimpleObjectEndPoint(
                 frame=1,
                 location=[1, 1, 1],
                 scale=[1, 1, 1],
                 rotation=[0, 0, 0],
                 alpha=1.0,
             ),
-            end_to=BasicEndPoint(
+            end_to=SimpleObjectEndPoint(
                 frame=1,
                 location=[1, 1, 1],
                 scale=[1, 1, 1],
@@ -356,7 +360,7 @@ if __name__ == "__main__":
             ),
         )
     if True:
-        test_cube = CreateObject(
+        test_cube = Object(
             name="test_cube",
             mesh=bpy.data.meshes["Cube"],
             location=(0, 0, 0),  # default value is (0,0,0)
