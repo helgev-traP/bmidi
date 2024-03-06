@@ -7,7 +7,7 @@ import bpy
 from attribute_access import *
 
 # todo only for development
-# from ..attribute_access.attribute_access import *
+from ..attribute_access.attribute_access import *
 
 # # BasicEndPoint
 
@@ -40,7 +40,11 @@ class SimpleObject:
     """2点間の移動のみ"""
 
     def __init__(
-        self, name: str, mesh, start_from: SimpleObjectEndPoint, end_to: SimpleObjectEndPoint
+        self,
+        name: str,
+        mesh,
+        start_from: SimpleObjectEndPoint,
+        end_to: SimpleObjectEndPoint,
     ) -> None:
         # todo 動くかチェック
         self.object = Object(name=name, mesh=mesh)

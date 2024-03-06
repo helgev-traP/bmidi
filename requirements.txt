@@ -1,2 +1,3 @@
-mido
-fake-bpy-module-3.4
+fake-bpy-module-3.4==20231118
+mido==1.3.2
+packaging==23.2
