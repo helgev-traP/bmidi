@@ -1,6 +1,8 @@
 """
 Usage:
 if __name__ == "__main__": の中
+
+todo なるべく関数に返り値がつくようにする
 """
 
 import bpy
@@ -8,6 +10,22 @@ from attribute_access import *
 
 # todo only for development
 from ..attribute_access.attribute_access import *
+
+INTERPOLATIONS = [
+    "CONSTANT",
+    "LINEAR",
+    "BEZIER",
+    "SINE",
+    "QUAD",
+    "CUBIC",
+    "QUART",
+    "QUINT",
+    "EXPO",
+    "CIRC",
+    "BACK",
+    "BOUNCE",
+    "ELASTIC",
+]
 
 # # BasicEndPoint
 
@@ -45,7 +63,9 @@ class SimpleObject:
         mesh,
         start_from: SimpleObjectEndPoint,
         end_to: SimpleObjectEndPoint,
+        interpolation: str = "BEZIER",
     ) -> None:
+        # todo 補完モードに関して実装する
         # todo 動くかチェック
         self.object = Object(name=name, mesh=mesh)
         self.object.new_channel_material(
@@ -125,6 +145,10 @@ class Object:
             def __init__(self, frame: int, value) -> None:
                 self.frame = frame
                 self.value = value
+                self.interpolation
+
+            def set_interpolation(self, interpolation):
+                self.interpolation = interpolation
 
         def __init__(
             self,
@@ -136,6 +160,8 @@ class Object:
             self.value_entity: str = value_entity
             self.data_path: str = data_path
             self.anchors = []
+            self.global_interpolation_enable = True
+            self.global_interpolation = "BEZIER"
 
         def add_anchor(self, frame: int, value):
             for i, anchor in enumerate(self.anchors):
@@ -172,6 +198,28 @@ class Object:
             print("At channel of", self.value_entity)
             print("No anchor at frame", frame)
             return
+
+        def move_anchor(self, index: str, frame: str):
+            val = self.anchors[index].value
+            self.del_anchor(index=index)
+            self.add_anchor(frame=frame, value=val)
+
+        def set_global_interpolation(self, interpolation: str):
+            if interpolation not in INTERPOLATIONS:
+                print("invalid interpolation name.")
+                return False
+            self.global_interpolation = interpolation
+            self.global_interpolation_enable = True
+            for i in self.anchors:
+                i.set_interpolation(interpolation)
+            return True
+
+        def set_interpolation(self, interpolation: str, index):
+            if interpolation not in INTERPOLATIONS:
+                print("invalid interpolation name.")
+                return False
+            self.global_interpolation_enable = False
+            self.anchors[index].set_interpolation(interpolation)
 
     # # main
 
