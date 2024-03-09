@@ -6,19 +6,19 @@ from inspect import signature
 
 sys.dont_write_bytecode = True
 # attr
-from attribute_access.attribute_access import *
+from .attribute_access import *
 
 # object
-from object.trailing_object import *
+from .object.trailing_object import *
 
 # score
-from score.from_score import *
-from score.midi_track import *
-from score.score import *
+from .score.from_score import *
+from .score.midi_track import *
+from .score.score import *
 
 # root
-from object_score import *
-from motion_cut import *
+from .object_score import *
+from .motion_cut import *
 
 
 

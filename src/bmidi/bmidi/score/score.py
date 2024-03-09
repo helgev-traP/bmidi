@@ -6,7 +6,7 @@
 # 使うかどうかはわからない
 import mido
 import bpy
-from attribute_access import *
+from ..attribute_access import *
 
 # todo refactoring
 
@@ -20,8 +20,8 @@ class Score:
     - midi_format_type  : int
     - ticks_per_beat    : int
     - Message           : list
-      - type            : str
-      - else            :
+        - type            : str
+        - else            :
     '''
     def __init__(
         self,

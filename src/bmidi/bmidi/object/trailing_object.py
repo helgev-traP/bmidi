@@ -6,10 +6,8 @@ todo なるべく関数に返り値がつくようにする
 """
 
 import bpy
-# from attribute_access import *
-
-# todo only for development
-from ..attribute_access.attribute_access import *
+from ..attribute_access.attribute_access import getattr_h
+from ..attribute_access.attribute_access import setattr_h
 
 INTERPOLATIONS = [
     "CONSTANT",
