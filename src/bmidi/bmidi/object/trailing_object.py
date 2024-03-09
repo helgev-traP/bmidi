@@ -157,8 +157,8 @@ class Object:
             self.value_entity: str = value_entity
             self.data_path: str = data_path
             self.anchors = []
-            self.global_interpolation_enable = True
-            self.global_interpolation = "BEZIER"
+            self.channel_interpolation_enable = True
+            self.channel_interpolation = "BEZIER"
 
         def add_anchor(self, frame: int, value):
             for i, anchor in enumerate(self.anchors):
@@ -201,22 +201,33 @@ class Object:
             self.del_anchor(index=index)
             self.add_anchor(frame=frame, value=val)
 
-        def set_global_interpolation(self, interpolation: str):
+        def set_channel_interpolation(self, interpolation: str):
             if interpolation not in INTERPOLATIONS:
                 print("invalid interpolation name.")
                 return False
-            self.global_interpolation = interpolation
-            self.global_interpolation_enable = True
-            for i in self.anchors:
-                i.set_interpolation(interpolation)
-            return True
+            else:
+                self.channel_interpolation = interpolation
+                self.channel_interpolation_enable = True
+                for i in self.anchors:
+                    i.set_interpolation(interpolation)
+                return True
 
         def set_interpolation(self, interpolation: str, index):
             if interpolation not in INTERPOLATIONS:
                 print("invalid interpolation name.")
                 return False
-            self.global_interpolation_enable = False
-            self.anchors[index].set_interpolation(interpolation)
+            else:
+                self.channel_interpolation_enable = False
+                self.anchors[index].set_interpolation(interpolation)
+
+        def get_channel_interpolation_enable(self):
+            return self.channel_interpolation_enable
+
+        def get_channel_interpolation(self):
+            if self.channel_interpolation_enable:
+                return self.channel_interpolation
+            else:
+                return None
 
     # # main
 
@@ -352,6 +363,37 @@ class Object:
             data_path=modifier_property,
         )
 
+    # ## interpolation
+
+    def set_global_interpolation(self, interpolation: str):
+        if interpolation not in INTERPOLATIONS:
+            return False
+        else:
+            for channel in self.channels:
+                channel.set_channel_interpolation(interpolation)
+
+    def set_channel_interpolation(self, channel: str, interpolation: str):
+        if interpolation not in INTERPOLATIONS:
+            return False
+        else:
+            self.channels[channel].set_channel_interpolation(interpolation)
+
+    def set_interpolation(self, channel: str, index: int, interpolation: str):
+        if interpolation not in INTERPOLATIONS:
+            return False
+        else:
+            self.channels[channel].set_interpolation(
+                interpolation=interpolation, index=index
+            )
+
+    # # Blender Utilities
+
+    def set_individual_material(self):
+        pass
+
+    def add_modifier(self):
+        pass
+
     # # bake2blend
 
     def bake2blend(self):
@@ -371,16 +413,10 @@ class Object:
                     instance=self.__object,
                     attribute_path=channel.base_entity + "keyframe_insert",
                 )(data_path=channel.data_path, index=-1)
+                
+                # todo ここに補完モードをBlenderに設定するものを書く
         # link
         bpy.context.scene.collection.objects.link(self.__object)
-
-    # # Blender Utilities
-
-    def set_individual_material(self):
-        pass
-
-    def add_modifier(self):
-        pass
 
 
 # # Usage Example
