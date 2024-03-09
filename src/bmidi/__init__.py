@@ -1,7 +1,6 @@
 # 開発環境のみ
 import sys
 
-sys.dont_write_bytecode = True
 # attr
 from attribute_access.attribute_access import *
 
@@ -19,3 +18,5 @@ from motion_cut import *
 
 # help
 from help_module import *
+
+sys.dont_write_bytecode = True

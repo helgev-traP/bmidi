@@ -1,6 +1,8 @@
 """help module"""
 
 import sys
+# utl
+from inspect import signature
 
 sys.dont_write_bytecode = True
 # attr
@@ -18,8 +20,6 @@ from score.score import *
 from object_score import *
 from motion_cut import *
 
-# utl
-from inspect import signature
 
 
 def help():
@@ -61,5 +61,5 @@ def help():
         else:
             print("\t", i)
 
-
-help()
+if __name__ == "__main__":
+    help()
