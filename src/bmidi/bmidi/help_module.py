@@ -12,7 +12,6 @@ from .attribute_access import *
 from .object.trailing_object import *
 
 # score
-from .score.from_score import *
 from .score.midi_track import *
 from .score.score import *
 
