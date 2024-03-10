@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="bmidi",
-    version="1.1.0",
+    version="1.2.20240311",
     packages=find_packages(),
     install_requires="mido",
 )
