@@ -142,7 +142,7 @@ class Object:
             def __init__(self, frame: int, value) -> None:
                 self.frame = frame
                 self.value = value
-                self.interpolation
+                self.interpolation = None
 
             def set_interpolation(self, interpolation):
                 self.interpolation = interpolation
@@ -157,6 +157,7 @@ class Object:
             self.value_entity: str = value_entity
             self.data_path: str = data_path
             self.anchors = []
+            self.default_interpolation = True
             self.channel_interpolation_enable = True
             self.channel_interpolation = "BEZIER"
 
@@ -205,7 +206,12 @@ class Object:
             if interpolation not in INTERPOLATIONS:
                 print("invalid interpolation name.")
                 return False
+            elif self.base_entity != "":
+                # ! オブジェクト直下のプロパティのみ編集可能
+                print("changing interpolation is now only enable at object properties.")
+                return False
             else:
+                self.default_interpolation = False
                 self.channel_interpolation = interpolation
                 self.channel_interpolation_enable = True
                 for i in self.anchors:
@@ -216,7 +222,12 @@ class Object:
             if interpolation not in INTERPOLATIONS:
                 print("invalid interpolation name.")
                 return False
+            elif self.base_entity != "":
+                # ! オブジェクト直下のプロパティのみ編集可能
+                print("changing interpolation is now only enable at object properties.")
+                return False
             else:
+                self.default_interpolation = False
                 self.channel_interpolation_enable = False
                 self.anchors[index].set_interpolation(interpolation)
 
@@ -337,7 +348,7 @@ class Object:
     ):
         self.channels[channel_name].del_anchor(frame=frame, index=index)
 
-    # ## wraping new_channel
+    # ## wrapping new_channel
 
     def new_channel_object(self, name, object_property):
         self.new_channel(
@@ -397,6 +408,7 @@ class Object:
     # # bake2blend
 
     def bake2blend(self):
+        action = bpy.data.actions[self.__object.animation_data.action.name]
         for channel in self.channels.values():
             for anchor in channel.anchors:
                 bpy.context.scene.frame_set(anchor.frame)
@@ -413,8 +425,15 @@ class Object:
                     instance=self.__object,
                     attribute_path=channel.base_entity + "keyframe_insert",
                 )(data_path=channel.data_path, index=-1)
-                
-                # todo ここに補完モードをBlenderに設定するものを書く
+
+            # ! オブジェクト直下のプロパティのみ編集可能
+            if channel.base_entity == "" and channel.default_interpolation == False:
+                for i, anchor in enumerate(channel.anchors):
+                    if anchor.interpolation != None:
+                        action.fcurves.find(
+                            channel.data_path, index=-1
+                        ).keyframe_points[i].interpolation = anchor.interpolation
+
         # link
         bpy.context.scene.collection.objects.link(self.__object)
 
